@@ -7,6 +7,7 @@
     int Menu::select(){
         return selected;
     }
+    
     void Menu::cycle(){
         selected++;
         if (selected >= numOptions){
@@ -23,6 +24,7 @@
         display.clearDisplay();
         display.setCursor(0,0);
         display.println(menuName);
+        display.println("this is working");
         display.drawFastHLine(0,7,SCREEN_WIDTH,SSD1306_WHITE);
 
         int displayedLines = (SCREEN_HEIGHT / 8) - 1;
@@ -40,5 +42,7 @@
                 display.println(i);
             }
         }
+
+        printf("Selected: %d", selected);
         display.display();
     }

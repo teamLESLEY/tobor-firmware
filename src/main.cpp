@@ -19,7 +19,6 @@ Motor::DCMotor motorR(MOTOR_R_FORWARD, MOTOR_R_REVERSE, MIN_PWM_RIGHT);
 Motor::Navigator navi(motorL, motorR, tape);
 
 Servo binServo; 
-Menu activeMenu;
 
 
 void nemo_detect(){
@@ -76,31 +75,31 @@ void runCompetition(){
   // dump cans
 }
 
-void cycleActiveMenu(){
-  activeMenu.cycle();
-}
 
 void menu(){
 
-  attachInterrupt(DEBUG_UP, cycleActiveMenu, RISING);
+  //attachInterrupt(DEBUG_UP, cycleActiveMenu, RISING);
 
-  Menu mainMenu("Main Menu",5, display);
-  activeMenu = mainMenu;
-  mainMenu.show();
+  Menu mainMenu("Main Menu",3, display);
+  /*mainMenu.show();
   delay(3000);
+  mainMenu.cycle();
+  delay(1000);
 
   for(int i = 0; i < 7; i++){
     mainMenu.cycle();
     delay(1000);
   }
-
+*/
   int result = mainMenu.select();
+
 
   display.clearDisplay();
   display.setCursor(0,0);
   display.println("Selected: ");
   display.println(result);
   delay(5000);
+  display.display();
 
 
   //Fancy stuff
