@@ -5,6 +5,8 @@
 
 #define DEBUG_POT PA4
 #define DEBUG_UP PB12
+#define DEBUG_DOWN PB13
+
 #define WINDMILL PA3
 
 #define BIN_SERVO PB7

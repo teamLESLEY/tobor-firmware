@@ -5,6 +5,7 @@
 #include <Servo.h>
 #include <navigation.hpp>
 #include <config.h>
+#include "menu.hpp"
 
 #define SCREEN_WIDTH 128
 #define SCREEN_HEIGHT 64
@@ -18,3 +19,99 @@ Motor::DCMotor motorR(MOTOR_R_FORWARD, MOTOR_R_REVERSE, MIN_PWM_RIGHT);
 Motor::Navigator navi(motorL, motorR, tape);
 
 Servo binServo; 
+Menu activeMenu;
+
+
+void nemo_detect(){
+}
+
+void setup(){
+
+  display.begin(SSD1306_SWITCHCAPVCC, 0x3C);
+  display.clearDisplay();
+  display.setTextSize(1);
+  display.setTextColor(SSD1306_WHITE);
+  display.setCursor(0, 0);
+
+  // Inputs
+  pinMode(DEBUG_UP, INPUT_PULLUP);
+  pinMode(DEBUG_DOWN, INPUT_PULLUP);
+  pinMode(DEBUG_POT, INPUT);
+
+  pinMode(NEMO, INPUT_PULLUP);
+  attachInterrupt(NEMO, nemo_detect, FALLING);
+
+  // Outputs
+  pinMode(WINDMILL, OUTPUT);
+
+  binServo.attach(BIN_SERVO);
+  binServo.write(BIN_MIN);
+
+}
+
+
+void fullLeftTurn(){}
+void fullRightTurn(){}
+void pivot(){}
+void halfRightTurn(){}
+
+void straightUntilNemo(){
+  while(true/*nemo has yet to be triggered */){}
+}
+
+void runCompetition(){
+
+  // turn on windmill
+
+  // follow tape to first flag
+
+  // turns
+
+  // blah blah blah
+
+  // pivot
+
+  // align to bin
+
+  // dump cans
+}
+
+void cycleActiveMenu(){
+  activeMenu.cycle();
+}
+
+void menu(){
+
+  attachInterrupt(DEBUG_UP, cycleActiveMenu, RISING);
+
+  Menu mainMenu("Main Menu",5, display);
+  activeMenu = mainMenu;
+  mainMenu.show();
+  delay(3000);
+
+  for(int i = 0; i < 7; i++){
+    mainMenu.cycle();
+    delay(1000);
+  }
+
+  int result = mainMenu.select();
+
+  display.clearDisplay();
+  display.setCursor(0,0);
+  display.println("Selected: ");
+  display.println(result);
+  delay(5000);
+
+
+  //Fancy stuff
+
+  //select competition
+  runCompetition();
+
+}
+
+
+
+void loop() {
+    menu();
+}
