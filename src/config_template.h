@@ -27,5 +27,7 @@
 #define MOTOR_L_REVERSE PB9
 #define MOTOR_R_FORWARD PB1
 #define MOTOR_R_REVERSE PB0
+#define MIN_PWM_LEFT 500
+#define MIN_PWM_RIGHT 500
 
 #endif
