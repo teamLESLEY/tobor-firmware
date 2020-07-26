@@ -4,7 +4,7 @@
 #include <motor.hpp>
 #include <Servo.h>
 #include <navigation.hpp>
-#include <pins.hpp>
+#include <config.h>
 
 #define SCREEN_WIDTH 128
 #define SCREEN_HEIGHT 64
