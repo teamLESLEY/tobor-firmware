@@ -1,25 +1,33 @@
 #include "menu.hpp"
+#include <vector>
+#include <string>
 
-    Menu::Menu(char *menuName, /*char **options,*/ int numOptions, Adafruit_SSD1306 display)
-    : menuName(menuName),/* options(options),*/ numOptions(numOptions), display(display){
+using std::string;
+using std::vector;
+
+    Menu::Menu(char *menuName, vector<string> options, Adafruit_SSD1306 display)
+    : menuName(menuName), options(options), display(display) {
     }
 
-    int Menu::select(){
+    int Menu::select() {
         return selected;
+
     }
-    void Menu::cycle(){
+    void Menu::cycle() {
         selected++;
+
         if (selected >= numOptions){
             selected = 0;
         }
+
         updateDisplay();
     }
 
-    void Menu::show(){
+    void Menu::show() {
         updateDisplay();
     }
 
-    void Menu::updateDisplay(){
+    void Menu::updateDisplay() {
         display.clearDisplay();
         display.setCursor(0,0);
         display.println(menuName);
@@ -31,14 +39,15 @@
             topLine = selected - displayedLines + 1;
         }
 
-        for (int i = topLine; i < displayedLines && i < numOptions; i++){
+        for (int i = topLine; i < displayedLines && i < options.size(); i++){
             if(i == selected){
                 display.setTextColor(SSD1306_BLACK, SSD1306_WHITE);
-                display.println(i);
             } else {
                 display.setTextColor(SSD1306_WHITE, SSD1306_BLACK);
-                display.println(i);
             }
+
+            display.println(options[i].c_str());
         }
+
         display.display();
     }
