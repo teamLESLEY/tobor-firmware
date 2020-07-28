@@ -47,7 +47,7 @@ void halfRightTurn();
 void setup();
 void loop();
 void subroutineMenu();
-void getMenuSelection();
+unsigned int getMenuSelection(Menu menu);
 void emptyFunc();
 void printfToDisplay(const char *format, ...);
 

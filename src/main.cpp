@@ -35,7 +35,7 @@ void setup(){
   pinMode(DEBUG_POT, INPUT);
 
   pinMode(NEMO, INPUT_PULLUP);
-  attachInterrupt(NEMO, nemo_detect, FALLING);
+  attachInterrupt(NEMO, nemoDetect, FALLING);
 
   // Outputs
   pinMode(WINDMILL, OUTPUT);
@@ -69,7 +69,7 @@ void fullLeftTurn(){}
 void fullRightTurn(){}
 void pivot(){}
 void halfRightTurn(){}
-void nemo_detect(){
+void nemoDetect(){
 }
 
 void setWindmill(double percentage){
