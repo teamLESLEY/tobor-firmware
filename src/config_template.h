@@ -3,6 +3,9 @@
 #ifndef PINS_H
 #define PINS_H
 
+#include <Wire.h>
+#include <Adafruit_SSD1306.h>
+
 #define DEBUG_POT PA4
 #define DEBUG_UP PB12
 #define DEBUG_DOWN PB13
@@ -31,5 +34,11 @@
 #define MOTOR_R_REVERSE PB0
 #define MIN_PWM_LEFT 500
 #define MIN_PWM_RIGHT 500
+
+#define SCREEN_WIDTH 128
+#define SCREEN_HEIGHT 64
+#define OLED_RESET -1
+TwoWire Wire2(DISPLAY_SDA, DISPLAY_SCL);
+Adafruit_SSD1306 display(SCREEN_WIDTH, SCREEN_HEIGHT, &Wire2, OLED_RESET);
 
 #endif
