@@ -19,8 +19,6 @@ void runEntertainment(){
   delay(3000);
 }
 
-
-
 void setup(){
 
   display.begin(SSD1306_SWITCHCAPVCC, 0x3C);
@@ -55,8 +53,6 @@ void loop() {
 }
 
 
-
-
 void lowerBin(){
   binServo.write(BIN_MIN);
 }
@@ -65,11 +61,46 @@ void raiseBin(){
 }
 
 
-void fullLeftTurn(){}
-void fullRightTurn(){}
-void pivot(){}
-void halfRightTurn(){}
+void leftUntilNemo(){
+  consumeTrigger(); // reset nemo
+  double kd = 0;
+  double kp = 0;
+  double gain = 0.5;
+  while(!digitalRead(CONFIRM) && !consumeTrigger()){
+    kp = analogRead(DEBUG_POT) * gain / 5000.0;
+    printfToDisplay("kp: %.3f", kp);
+    navi.correctToTape(0,MOTOR_BASE_SPEED,kp,kd);
+  }
+  navi.stop();
+}
+
+
+void rightUntilNemo(){
+  consumeTrigger(); // reset nemo
+  while(!digitalRead(CONFIRM) && !consumeTrigger()){
+    navi.start(MOTOR_BASE_SPEED,0);
+  }
+  navi.stop();
+}
+
+void pivotUntilNemo(){
+  consumeTrigger(); // reset nemo
+  while(!digitalRead(CONFIRM) && !consumeTrigger()){
+    navi.start(MOTOR_BASE_SPEED,-MOTOR_BASE_SPEED);
+  }
+  navi.stop();
+}
+
 void nemoDetect(){
+  nemoTriggered = true;
+}
+
+bool consumeTrigger(){
+  if (!nemoTriggered){
+    return false;
+  }
+  nemoTriggered = false;
+  return true;
 }
 
 void setWindmill(double percentage){
@@ -87,8 +118,6 @@ void printSensorReadings(){
       digitalRead(NEMO));
   }
 }
-
-
 
 
 void setWindmillWithPot(){
@@ -117,10 +146,17 @@ void setBinWithPot(){
   }
 }
 
-
-
 void straightUntilNemo(){
-  while(true/*nemo has yet to be triggered */){}
+  consumeTrigger(); // reset nemo
+  double kd = 0;
+  double kp = 0;
+  double gain = 0.5;
+  while(!digitalRead(CONFIRM) && !consumeTrigger()){
+    kp = analogRead(DEBUG_POT) * gain / 5000.0;
+    printfToDisplay("kp: %.3f", kp);
+    navi.correctToTape(MOTOR_BASE_SPEED,MOTOR_BASE_SPEED,kp,kd);
+  }
+  navi.stop();
 }
 
 
@@ -148,9 +184,20 @@ void subroutineMenu(){
   func();
 }
 
+void raiseBinOnDetect(){
+  while(!digitalRead(BIN_DETECT_L) || !digitalRead(BIN_DETECT_R)){
+    printfToDisplay("Left: %d\nRight: %d", 
+      digitalRead(BIN_DETECT_L), 
+      digitalRead(BIN_DETECT_R));
+    motorL.setSpeed(- MOTOR_BASE_SPEED * (!digitalRead(BIN_DETECT_L)));
+    motorR.setSpeed(- MOTOR_BASE_SPEED * (!digitalRead(BIN_DETECT_R)));
+  }
+  navi.stop();
+  delay(200);
+  raiseBin();
+}
 
 
-void raiseBinOnDetect(){}
 void hBridgeTest(){}
 
 

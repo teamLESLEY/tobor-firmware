@@ -24,7 +24,7 @@ namespace Motor{
         Navigator(Motor::DCMotor motorL, Motor::DCMotor motorR, TapeSensor ts);
 
         int tapeSensorError();
-        void correctToTape(double motorL_base_speed, double motorR_base_speed, unsigned int kp, unsigned int kd);
+        void correctToTape(double motorL_base_speed, double motorR_base_speed, double kp, double kd);
         
         void drive(double motorL_speed, double motorR_speed, unsigned int millis);
         void start(double motorL_speed, double motorR_speed);

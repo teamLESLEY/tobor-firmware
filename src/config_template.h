@@ -13,6 +13,8 @@
 #define WINDMILL PA3
 
 #define BIN_SERVO PB7
+#define BIN_DETECT_L PB4
+#define BIN_DETECT_R PA8
 #define BIN_MIN 20
 #define BIN_MAX 130
 

@@ -8,7 +8,7 @@ using namespace Motor;
     }
     
     // follows tape, if put in a while loop
-    void Navigator::correctToTape(double motorL_base_speed, double motorR_base_speed, unsigned int kp, unsigned int kd){
+    void Navigator::correctToTape(double motorL_base_speed, double motorR_base_speed, double kp, double kd){
         unsigned long now = millis();
 
         int error = tapeSensorError();
@@ -19,7 +19,7 @@ using namespace Motor;
         }
         lastIterationError = error;
         
-        double derivative = (error - previousError) / (now - previousErrorStartTime);
+        double derivative = (double)(error - previousError) / (now - previousErrorStartTime);
         double correction = kp * error + kd * derivative;
 
         start(motorL_base_speed - correction, motorR_base_speed + correction);

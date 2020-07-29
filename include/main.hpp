@@ -28,6 +28,8 @@ Motor::Navigator navi(motorL, motorR, tape);
 
 Servo binServo; 
 
+bool nemoTriggered = false;
+
 using std::vector;
 using std::string;
 
@@ -35,14 +37,14 @@ void runCompetition();
 void runEntertainment();
 
 void nemoDetect();
+bool consumeTrigger();
 void setWindmill(double percentage);
 void lowerBin();
 void raiseBin();
 
-void fullLeftTurn();
-void fullRightTurn();
-void pivot();
-void halfRightTurn();
+void leftUntilNemo();
+void rightUntilNemo();
+void pivotUntilNemo();
 
 void setup();
 void loop();
@@ -70,6 +72,7 @@ const vector<string> subOpts{
   "Straight until Nemo",
   "Right until Nemo",
   "Left until Nemo",
+  "Pivot until Nemo",
   "Set windmill with pot",
   "Set bin with pot",
   "Bin raise on detect",
@@ -81,8 +84,9 @@ const vector<string> subOpts{
   };
 const vector<callback_function_t> subCallbacks{
   straightUntilNemo, 
-  fullRightTurn, 
-  fullLeftTurn, 
+  rightUntilNemo, 
+  leftUntilNemo, 
+  pivotUntilNemo,
   setWindmillWithPot,
   setBinWithPot,
   raiseBinOnDetect,
