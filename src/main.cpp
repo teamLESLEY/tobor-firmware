@@ -2,24 +2,33 @@
 
 
 void runCompetition(){
-  printfToDisplay("Running Competition\n:)");
+  printToDisplay("Running Competition\n:)");
   delay(3000);
-  // turn on windmill
-  // follow tape to first flag
-  // turns
-  // blah blah blah
-  // pivot
-  // align to bin
-  // dump cans
+  /*
+  wm.currentSpeed = wm.targetSpeed;
+  straightUntilNemo();
+  rightUntilNemo();
+  straightUntilNemo();
+  leftUntilNemo();
+  straightUntilNemo();
+  rightUntilNemo();
+  straightUntilNemo();
+  rightUntilNemo();
+  straightUntilNemo();
+  pivotUntilNemo();
+  wm.currentSpeed = 0;
+  raiseBinOnDetect();*/
 }
 
 
 void runEntertainment(){
-  printfToDisplay("Running Entertainment\n:)");
+  printToDisplay("Running Entertainment\n:)");
   delay(3000);
 }
 
 void setup(){
+
+  // loadValues();
 
   display.begin(SSD1306_SWITCHCAPVCC, 0x3C);
   display.clearDisplay();
@@ -35,12 +44,21 @@ void setup(){
   pinMode(NEMO, INPUT_PULLUP);
   attachInterrupt(NEMO, nemoDetect, FALLING);
 
-  // Outputs
+  // Windmill Setup
   pinMode(WINDMILL, OUTPUT);
+  uint32_t channel = STM_PIN_CHANNEL(
+    pinmap_function(digitalPinToPinName(WINDMILL_TIMER_PIN), PinMap_PWM));  
+  pwm_start(digitalPinToPinName(WINDMILL), 256, wm.currentSpeed, RESOLUTION_10B_COMPARE_FORMAT);
+  wm.timer.pause();
+  wm.timer.setPWM(channel, WINDMILL_TIMER_PIN, 1, wm.dutycycle, 
+    windmillPulseLow, windmillPulseHigh); 
+  // sets period of timer (rather than freq, to allow for periods of > 1 sec)
+  wm.timer.setOverflow(1000 * wm.period, MICROSEC_FORMAT); 
+  wm.timer.resumeChannel(channel);
 
   // if servo is connected to same power supply as BP, do not run this block
-  binServo.attach(BIN_SERVO);
-  binServo.write(BIN_MIN);
+  //binServo.attach(BIN_SERVO);
+  //binServo.write(BIN_MIN);
 }
 
 
@@ -48,7 +66,7 @@ void loop() {
   unsigned int choice = getMenuSelection(mainMenu);
   mainMenu.callbacks[choice]();
   
-  printfToDisplay("Returning to \nMain Menu");
+  printToDisplay("Returning to \nMain Menu");
   delay(MENU_WAIT_TIME);
 }
 
@@ -68,7 +86,8 @@ void leftUntilNemo(){
   double gain = 0.5;
   while(!digitalRead(CONFIRM) && !consumeTrigger()){
     kp = analogRead(DEBUG_POT) * gain / 5000.0;
-    printfToDisplay("kp: %.3f", kp);
+    sprintf(buffer, "kp: %.3f", kp);
+    printToDisplay(buffer);
     navi.correctToTape(0,MOTOR_BASE_SPEED,kp,kd);
   }
   navi.stop();
@@ -103,45 +122,49 @@ bool consumeTrigger(){
   return true;
 }
 
-void setWindmill(double percentage){
-  int freq = 512;
-  int speed = freq * percentage;
-  pwm_start(digitalPinToPinName(WINDMILL),512,speed,RESOLUTION_10B_COMPARE_FORMAT);
+void windmillPulseHigh(){
+  analogWrite(WINDMILL, wm.currentSpeed * 1023 / 100);
 }
 
+void windmillPulseLow(){
+  analogWrite(WINDMILL, 0);
+}
 
 void printSensorReadings(){
   while(!digitalRead(CONFIRM)){
-    printfToDisplay("Tape L: %4.d \nTape R: %4.d \n\n Nemo: %1.d", 
-      tape.getLeftReading(), 
-      tape.getRightReading(), 
+    sprintf(buffer, 
+      "Tape L: %d\nTape R: %d\n\nNemo: %d",
+      tape.getLeftReading(),
+      tape.getRightReading(),
       digitalRead(NEMO));
+    printToDisplay(buffer);
   }
 }
 
 
 void setWindmillWithPot(){
+  int percentage = analogRead(DEBUG_POT) * 100 / 1023;
   while(!digitalRead(CONFIRM) && !digitalRead(CYCLE)){
-    double percentage = analogRead(DEBUG_POT) / 1023.0;
-    display.clearDisplay();
-    display.setCursor(0,0);
-    display.print("Windmill power: ");
-    display.print((int) (percentage * 100));
-    display.print("%\n");
-    display.println("UP to confirm");
-    display.println("DOWN to stop");
-    display.display();
-    setWindmill(percentage);
+    percentage = analogRead(DEBUG_POT) * 100 / 1023;
+    sprintf(buffer, 
+      "Windmill power: %d%%\n\nUP to save\nDOWN to stop",
+      percentage);
+    printToDisplay(buffer);
+    wm.currentSpeed = percentage;
   }
   if(digitalRead(CYCLE)){
-    setWindmill(0);
+    wm.currentSpeed = 0;
+  } else if(digitalRead(CONFIRM)){
+    wm.targetSpeed = percentage;
+    saveValues();
   }
 }
 
 void setBinWithPot(){
   while(!digitalRead(CONFIRM)){
-    int angle = analogRead(DEBUG_POT) * 180 / 1023;
-    printfToDisplay("Bin angle: %d", angle);
+    int angle = (int)analogRead(DEBUG_POT) * 180 / 1023;
+    sprintf(buffer, "Bin angle: %d", angle);
+    printToDisplay(buffer);
     binServo.write(angle);
   }
 }
@@ -150,16 +173,18 @@ void straightUntilNemo(){
   consumeTrigger(); // reset nemo
   double kd = 0;
   double kp = 0;
-  double gain = 0.5;
+  double gain = 0.5;  
   while(!digitalRead(CONFIRM) && !consumeTrigger()){
     kp = analogRead(DEBUG_POT) * gain / 5000.0;
-    printfToDisplay("kp: %.3f", kp);
+    sprintf(buffer, "kp: %.4f", kp);
+    printToDisplay(buffer);
     navi.correctToTape(MOTOR_BASE_SPEED,MOTOR_BASE_SPEED,kp,kd);
+    delay(50);
   }
   navi.stop();
+  printToDisplay("Done!");
+  delay(2000);
 }
-
-
 
 unsigned int getMenuSelection(Menu menu){
   menu.show(display);
@@ -167,18 +192,16 @@ unsigned int getMenuSelection(Menu menu){
     if(digitalRead(CYCLE)){
       menu.cycle();
       menu.show(display);
-      delay(150);
+      delay(CYCLE_WAIT_TIME);
     }
   }
   // for unknown reasons, menu fails in second iteration unless this is included. 
-  // do not remove
-  printfToDisplay("Loading...");
+  printToDisplay("Loading...");
   delay(MENU_WAIT_TIME);
   return menu.select();
 }
 
 void subroutineMenu(){
-
   int choice = getMenuSelection(subMenu);
   callback_function_t func = subMenu.callbacks[choice];
   func();
@@ -186,9 +209,11 @@ void subroutineMenu(){
 
 void raiseBinOnDetect(){
   while(!digitalRead(BIN_DETECT_L) || !digitalRead(BIN_DETECT_R)){
-    printfToDisplay("Left: %d\nRight: %d", 
+    sprintf(buffer,
+      "Left: %d\nRight: %d", 
       digitalRead(BIN_DETECT_L), 
       digitalRead(BIN_DETECT_R));
+    printToDisplay(buffer);
     motorL.setSpeed(- MOTOR_BASE_SPEED * (!digitalRead(BIN_DETECT_L)));
     motorR.setSpeed(- MOTOR_BASE_SPEED * (!digitalRead(BIN_DETECT_R)));
   }
@@ -198,18 +223,64 @@ void raiseBinOnDetect(){
 }
 
 
-void hBridgeTest(){}
+void hBridgeTest(){
+  navi.drive(0.8,0.8,2000);
+  navi.drive(-0.8,-0.8,2000);
+}
 
 
-void printfToDisplay(const char *format, ...) {
+void printToDisplay(const char *str) {
     display.clearDisplay();
     display.setCursor(0,0);
-    va_list args;
-    va_start(args, format);
-    display.printf(format, args);
-    va_end(args);
+    display.print(str);
     display.display();
 }
 
 void emptyFunc(){
+}
+
+void saveValues(){
+  
+  // drive
+  // kp
+  // kd
+  // gain
+  // base speed left (straight)
+  // base speed right (straight)
+  // base speed left (l turn)
+  // base speed right (l turn)
+  // base speed left (r turn)
+  // base speed right (r turn)
+
+  // windmill
+  // speed
+  // period
+  // duty cycle
+  
+  // bin
+  // min
+  // max
+}
+
+void loadValues(){
+  // drive
+  // kp
+  // kd
+  // gain
+  // base speed left (straight)
+  // base speed right (straight)
+  // base speed left (l turn)
+  // base speed right (l turn)
+  // base speed left (r turn)
+  // base speed right (r turn)
+
+  // windmill
+  // speed
+  // period
+  // duty cycle
+  
+  // bin
+  // min
+  // max
+
 }

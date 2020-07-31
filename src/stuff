@@ -1,0 +1,43 @@
+#include <Wire.h>
+#include <Adafruit_SSD1306.h>
+
+// change pins here if needed
+#define TAPE_L PA5
+#define TAPE_R PA6
+#define NEMO PA0
+#define DISPLAY_SDA PB11
+#define DISPLAY_SCL PB10
+
+#define SCREEN_WIDTH 128
+#define SCREEN_HEIGHT 64
+#define OLED_RESET -1
+
+TwoWire Wire2(DISPLAY_SDA, DISPLAY_SCL);
+Adafruit_SSD1306 display(SCREEN_WIDTH, SCREEN_HEIGHT, &Wire2, OLED_RESET);
+
+void setup(){
+
+  display.begin(SSD1306_SWITCHCAPVCC, 0x3C);
+  display.clearDisplay();
+  display.setTextSize(1);
+  display.setTextColor(SSD1306_WHITE);
+  display.setCursor(0, 0);
+
+  pinMode(NEMO, INPUT_PULLUP);
+  pinMode(TAPE_L, INPUT);
+  pinMode(TAPE_R, INPUT);
+
+}
+
+void loop(){
+    display.clearDisplay();
+    display.setCursor(0,0);
+    display.print("Tape L: ");
+    display.print(analogRead(TAPE_L));
+    display.print("\nTape R: ");
+    display.print(analogRead(TAPE_R));
+    display.print("\n\nNemo: ");
+    display.print(digitalRead(NEMO));
+    display.display();
+    delay(20);
+}

@@ -17,6 +17,7 @@
 #define CYCLE DEBUG_DOWN
 
 #define MENU_WAIT_TIME 500
+#define CYCLE_WAIT_TIME 200
 
 TwoWire Wire2(DISPLAY_SDA, DISPLAY_SCL);
 Adafruit_SSD1306 display(SCREEN_WIDTH, SCREEN_HEIGHT, &Wire2, OLED_RESET);
@@ -28,36 +29,63 @@ Motor::Navigator navi(motorL, motorR, tape);
 
 Servo binServo; 
 
+HardwareTimer windmillTimer(TIM1);
+
+char buffer [147];
+struct Windmill {
+  int currentSpeed;
+  int targetSpeed;
+  int period; // milliseconds
+  int dutycycle;
+  int timerPin;
+  HardwareTimer timer;
+};
+
+Windmill wm{
+  0,
+  WINDMILL_SPEED, 
+  WINDMILL_PULSE_PERIOD, 
+  WINDMILL_PULSE_DUTYCYCLE, 
+  WINDMILL_TIMER_PIN, 
+  HardwareTimer(TIM1)
+};
+
 bool nemoTriggered = false;
 
 using std::vector;
 using std::string;
+
+void saveValues();
+void loadValues();
 
 void runCompetition();
 void runEntertainment();
 
 void nemoDetect();
 bool consumeTrigger();
-void setWindmill(double percentage);
+
+void windmillPulseHigh();
+void windmillPulseLow();
+void setWindmillWithPot();
+
 void lowerBin();
 void raiseBin();
+void setBinWithPot();
+void raiseBinOnDetect();
 
 void leftUntilNemo();
 void rightUntilNemo();
 void pivotUntilNemo();
+void straightUntilNemo();
 
 void setup();
 void loop();
 void subroutineMenu();
 unsigned int getMenuSelection(Menu menu);
 void emptyFunc();
-void printfToDisplay(const char *format, ...);
+void printToDisplay(const char *str);
 
 void printSensorReadings();
-void setWindmillWithPot();
-void setBinWithPot();
-void straightUntilNemo();
-void raiseBinOnDetect();
 void hBridgeTest();
 
 
