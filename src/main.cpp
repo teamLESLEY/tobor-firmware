@@ -35,7 +35,6 @@ void runEntertainment(){
 }
 
 void setup(){
-
   // loadValues();
 
   display.begin(SSD1306_SWITCHCAPVCC, 0x3C);
@@ -49,20 +48,8 @@ void setup(){
   pinMode(DEBUG_DOWN, INPUT_PULLUP);
   pinMode(DEBUG_POT, INPUT);
 
-  pinMode(NEMO, INPUT_PULLUP);
-  //attachInterrupt(NEMO, nemoDetect, FALLING);
-
   // Windmill Setup
-  pinMode(WINDMILL, OUTPUT);
-  uint32_t channel = STM_PIN_CHANNEL(
-    pinmap_function(digitalPinToPinName(WINDMILL_TIMER_PIN), PinMap_PWM));  
-  pwm_start(digitalPinToPinName(WINDMILL), 256, wm.currentSpeed, RESOLUTION_10B_COMPARE_FORMAT);
-  wm.timer.pause();
-  wm.timer.setPWM(channel, WINDMILL_TIMER_PIN, 1, wm.dutycycle, 
-    windmillPulseLow, windmillPulseHigh); 
-  // sets period of timer (rather than freq, to allow for periods of > 1 sec)
-  wm.timer.setOverflow(1000 * wm.period, MICROSEC_FORMAT); 
-  wm.timer.resumeChannel(channel);
+  windmill.setup();
 
   // if servo is connected to same power supply as BP, do not run this block
   //binServo.attach(BIN_SERVO);
@@ -90,54 +77,16 @@ void raiseBin(){
 
 
 void leftUntilNemo(){
-  navi.consumeNemoTrigger(); // reset nemo
-  double kd = 0;
-  double kp = 0;
-  double gain = 0.5;
-  while(!digitalRead(CONFIRM) && !navi.consumeNemoTrigger()){
-    kp = analogRead(DEBUG_POT) * gain / 5000.0;
-    sprintf(buffer, "kp: %.3f", kp);
-    printToDisplay(buffer);
-    navi.correctToTape(0,MOTOR_BASE_SPEED,kp,kd);
-  }
-  navi.stop();
+  navi.driveUntilNemo(L_TURN_L_MOTOR_SPEED, L_TURN_R_MOTOR_SPEED);
 }
 
 
 void rightUntilNemo(){
-  navi.consumeNemoTrigger(); // reset nemo
-  while(!digitalRead(CONFIRM) && !navi.consumeNemoTrigger()){
-    navi.start(R_TURN_L_MOTOR_SPEED,R_TURN_R_MOTOR_SPEED);
-  }
-  navi.stop();
+  navi.driveUntilNemo(R_TURN_L_MOTOR_SPEED, R_TURN_R_MOTOR_SPEED);
 }
 
 void pivotUntilNemo(){
-  navi.consumeNemoTrigger(); // reset nemo
-  while(!digitalRead(CONFIRM) && !navi.consumeNemoTrigger()){
-    navi.start(MOTOR_BASE_SPEED,-MOTOR_BASE_SPEED);
-  }
-  navi.stop();
-}
-
-void nemoDetect(){
-  nemoTriggered = true;
-}
-
-bool consumeTrigger(){
-  if (!nemoTriggered){
-    return false;
-  }
-  nemoTriggered = false;
-  return true;
-}
-
-void windmillPulseHigh(){
-  analogWrite(WINDMILL, wm.currentSpeed * 1023 / 100);
-}
-
-void windmillPulseLow(){
-  analogWrite(WINDMILL, 0);
+  navi.driveUntilNemo(MOTOR_BASE_SPEED, - MOTOR_BASE_SPEED);
 }
 
 void printSensorReadings(){
@@ -153,19 +102,19 @@ void printSensorReadings(){
 
 
 void setWindmillWithPot(){
-  int percentage = analogRead(DEBUG_POT) * 100 / 1023;
+  int speed = analogRead(DEBUG_POT);
   while(!digitalRead(CONFIRM) && !digitalRead(CYCLE)){
-    percentage = analogRead(DEBUG_POT) * 100 / 1023;
+    speed = analogRead(DEBUG_POT);
     sprintf(buffer, 
-      "Windmill power: %d%%\n\nUP to save\nDOWN to stop",
-      percentage);
+      "Windmill power: %d\n\nUP to save\nDOWN to stop",
+      speed);
     printToDisplay(buffer);
-    wm.currentSpeed = percentage;
+    windmill.currentSpeed = speed;
   }
   if(digitalRead(CYCLE)){
-    wm.currentSpeed = 0;
+    windmill.currentSpeed = 0;
   } else if(digitalRead(CONFIRM)){
-    wm.targetSpeed = percentage;
+    windmill.setSpeed(speed);
     saveValues();
   }
 }
@@ -199,7 +148,7 @@ void straightUntilNemo(int startSide){
 void straightUntilNemoOnRight(){
   straightUntilNemo(TapeSide::RIGHT);
   printToDisplay("Done!");
-  delay(2000);
+  delay(1000);
 }
 
 unsigned int getMenuSelection(Menu menu){

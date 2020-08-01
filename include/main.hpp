@@ -12,6 +12,7 @@
 #include "navigation.hpp"
 #include "config.h"
 #include "menu.hpp"
+#include "windmill.hpp"
 
 #define CONFIRM DEBUG_UP
 #define CYCLE DEBUG_DOWN
@@ -21,6 +22,7 @@
 
 TwoWire Wire2(DISPLAY_SDA, DISPLAY_SCL);
 Adafruit_SSD1306 display(SCREEN_WIDTH, SCREEN_HEIGHT, &Wire2, OLED_RESET);
+char buffer [147];
 
 TapeSensor tape(TAPE_L, TAPE_R, THRESHOLD);
 Motor::DCMotor motorL(MOTOR_L_FORWARD, MOTOR_L_REVERSE, MIN_PWM_LEFT);
@@ -28,29 +30,6 @@ Motor::DCMotor motorR(MOTOR_R_FORWARD, MOTOR_R_REVERSE, MIN_PWM_RIGHT);
 Motor::Navigator navi(motorL, motorR, tape, NEMO);
 
 Servo binServo; 
-
-HardwareTimer windmillTimer(TIM1);
-
-char buffer [147];
-struct Windmill {
-  int currentSpeed;
-  int targetSpeed;
-  int period; // milliseconds
-  int dutycycle;
-  int timerPin;
-  HardwareTimer timer;
-};
-
-Windmill wm{
-  0,
-  WINDMILL_SPEED, 
-  WINDMILL_PULSE_PERIOD, 
-  WINDMILL_PULSE_DUTYCYCLE, 
-  WINDMILL_TIMER_PIN, 
-  HardwareTimer(TIM1)
-};
-
-bool nemoTriggered = false;
 
 using std::vector;
 using std::string;
@@ -64,16 +43,12 @@ void runEntertainment();
 void nemoDetect();
 bool consumeTrigger();
 
-void windmillPulseHigh();
-void windmillPulseLow();
 void setWindmillWithPot();
 
 void lowerBin();
 void raiseBin();
 void setBinWithPot();
 void raiseBinOnDetect();
-
-
 
 void leftUntilNemo();
 void rightUntilNemo();

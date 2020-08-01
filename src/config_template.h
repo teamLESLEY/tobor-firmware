@@ -1,10 +1,7 @@
-// Contains pin definitions
+// Contains pin definitions and other robot-specific constants
 
 #ifndef PINS_H
 #define PINS_H
-
-#include <Wire.h>
-#include <Adafruit_SSD1306.h>
 
 #define DEBUG_POT PA4
 #define DEBUG_UP PB12
@@ -14,7 +11,7 @@
 #define WINDMILL_PULSE_PERIOD 1000 // ms
 #define WINDMILL_PULSE_DUTYCYCLE 70 // %
 #define WINDMILL_TIMER_PIN PA11
-#define WINDMILL_SPEED 50
+#define WINDMILL_SPEED 500 // [0 ... 1023]
 
 #define BIN_SERVO PB7
 #define BIN_DETECT_L PB4
