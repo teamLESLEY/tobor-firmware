@@ -1,21 +1,24 @@
 #ifndef WINDMILL_HPP
 #define WINDMILL_HPP
 
+#include <Arduino.h>
 #include "config.h"
-
-HardwareTimer windmillTimer(TIM1);
 
 void windmillPulseHigh();
 void windmillPulseLow();
 
-struct Windmill {
+class Windmill {
+
+public:
     int outputPin;
-    int currentSpeed;
+    int currentSpeed = 0;
     int period; // milliseconds
     int targetSpeed;
     int dutycycle;
     int timerPin;
     HardwareTimer timer;
+
+    Windmill(int, int, int, int, int, HardwareTimer);
 
     void setup();
     void start();
@@ -28,14 +31,13 @@ struct Windmill {
     void detach();
 };
 
-Windmill windmill{
-    WINDMILL,
-    0,
-    WINDMILL_SPEED, 
+inline Windmill windmill(    
+    WINDMILL, 
     WINDMILL_PULSE_PERIOD, 
+    WINDMILL_SPEED, 
     WINDMILL_PULSE_DUTYCYCLE, 
     WINDMILL_TIMER_PIN, 
     HardwareTimer(TIM1)
-};
+);
 
 #endif

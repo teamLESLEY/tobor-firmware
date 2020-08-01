@@ -8,6 +8,10 @@ void windmillPulseLow(){
   analogWrite(WINDMILL, 0);
 }
 
+Windmill::Windmill(int outputPin, int period, int targetSpeed, int dutycycle, int timerPin, HardwareTimer timer)
+  : outputPin(outputPin), period(period), targetSpeed(targetSpeed), dutycycle(dutycycle), timerPin(timerPin), timer(timer){
+}
+
   void Windmill::setup(){
     pinMode(outputPin, OUTPUT);
     uint32_t channel = STM_PIN_CHANNEL(

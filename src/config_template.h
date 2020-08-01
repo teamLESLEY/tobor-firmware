@@ -37,6 +37,8 @@
 #define MOTOR_R_REVERSE PA7
 #define MIN_PWM_LEFT 500
 #define MIN_PWM_RIGHT 500
+#define K_PROPORTIONAL 300
+#define K_DERIVATIVE 0
 
 #define TURN_DOMINANT 0.9
 #define TURN_SECONDARY (-0.1);

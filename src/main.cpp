@@ -120,12 +120,27 @@ void setWindmillWithPot(){
 }
 
 void setBinWithPot(){
+  binServo.attach(BIN_SERVO);
   while(!digitalRead(CONFIRM)){
     int angle = (int)analogRead(DEBUG_POT) * 180 / 1023;
     sprintf(buffer, "Bin angle: %d", angle);
     printToDisplay(buffer);
     binServo.write(angle);
   }
+}
+
+void setLeftMotorWithPot(){
+  binServo.attach(BIN_SERVO);
+  while(!digitalRead(CONFIRM)){
+    int angle = (int)analogRead(DEBUG_POT) * 180 / 1023;
+    sprintf(buffer, "Bin angle: %d", angle);
+    printToDisplay(buffer);
+    binServo.write(angle);
+  }
+}
+
+void setRightMotorWithPot(){
+
 }
 
 void straightUntilNemo(int startSide){
