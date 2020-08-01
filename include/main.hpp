@@ -12,6 +12,7 @@
 #include "navigation.hpp"
 #include "config.h"
 #include "menu.hpp"
+#include "debug_funcs.hpp"
 
 #define CONFIRM DEBUG_UP
 #define CYCLE DEBUG_DOWN
@@ -25,7 +26,7 @@ Adafruit_SSD1306 display(SCREEN_WIDTH, SCREEN_HEIGHT, &Wire2, OLED_RESET);
 TapeSensor tape(TAPE_L, TAPE_R, THRESHOLD);
 Motor::DCMotor motorL(MOTOR_L_FORWARD, MOTOR_L_REVERSE, MIN_PWM_LEFT);
 Motor::DCMotor motorR(MOTOR_R_FORWARD, MOTOR_R_REVERSE, MIN_PWM_RIGHT);
-Motor::Navigator navi(motorL, motorR, tape);
+Motor::Navigator navi(motorL, motorR, tape, NEMO);
 
 Servo binServo; 
 
@@ -73,10 +74,13 @@ void raiseBin();
 void setBinWithPot();
 void raiseBinOnDetect();
 
+
+
 void leftUntilNemo();
 void rightUntilNemo();
 void pivotUntilNemo();
-void straightUntilNemo();
+void straightUntilNemoOnRight();
+void straightUntilNemo(int startSide);
 
 void setup();
 void loop();
@@ -111,7 +115,7 @@ const vector<string> subOpts{
   "Back"
   };
 const vector<callback_function_t> subCallbacks{
-  straightUntilNemo, 
+  straightUntilNemoOnRight, 
   rightUntilNemo, 
   leftUntilNemo, 
   pivotUntilNemo,

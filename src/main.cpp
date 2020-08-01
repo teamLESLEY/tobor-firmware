@@ -2,8 +2,17 @@
 
 
 void runCompetition(){
+  double kp = 0.02;
+  double kd = 0;
   printToDisplay("Running Competition\n:)");
-  delay(3000);
+  delay(200);
+
+  //navi.tapeFollowUntilNemo(MOTOR_BASE_SPEED, MOTOR_BASE_SPEED, kp, kd);
+
+
+  /*straightUntilNemo(TapeSide::RIGHT);
+  rightUntilNemo();
+  straightUntilNemo(TapeSide::LEFT);*/
   /*
   wm.currentSpeed = wm.targetSpeed;
   straightUntilNemo();
@@ -19,7 +28,6 @@ void runCompetition(){
   wm.currentSpeed = 0;
   raiseBinOnDetect();*/
 }
-
 
 void runEntertainment(){
   printToDisplay("Running Entertainment\n:)");
@@ -42,7 +50,7 @@ void setup(){
   pinMode(DEBUG_POT, INPUT);
 
   pinMode(NEMO, INPUT_PULLUP);
-  attachInterrupt(NEMO, nemoDetect, FALLING);
+  //attachInterrupt(NEMO, nemoDetect, FALLING);
 
   // Windmill Setup
   pinMode(WINDMILL, OUTPUT);
@@ -74,17 +82,19 @@ void loop() {
 void lowerBin(){
   binServo.write(BIN_MIN);
 }
+
 void raiseBin(){
+  binServo.attach(BIN_SERVO);
   binServo.write(BIN_MAX);
 }
 
 
 void leftUntilNemo(){
-  consumeTrigger(); // reset nemo
+  navi.consumeNemoTrigger(); // reset nemo
   double kd = 0;
   double kp = 0;
   double gain = 0.5;
-  while(!digitalRead(CONFIRM) && !consumeTrigger()){
+  while(!digitalRead(CONFIRM) && !navi.consumeNemoTrigger()){
     kp = analogRead(DEBUG_POT) * gain / 5000.0;
     sprintf(buffer, "kp: %.3f", kp);
     printToDisplay(buffer);
@@ -95,16 +105,16 @@ void leftUntilNemo(){
 
 
 void rightUntilNemo(){
-  consumeTrigger(); // reset nemo
-  while(!digitalRead(CONFIRM) && !consumeTrigger()){
-    navi.start(MOTOR_BASE_SPEED,0);
+  navi.consumeNemoTrigger(); // reset nemo
+  while(!digitalRead(CONFIRM) && !navi.consumeNemoTrigger()){
+    navi.start(R_TURN_L_MOTOR_SPEED,R_TURN_R_MOTOR_SPEED);
   }
   navi.stop();
 }
 
 void pivotUntilNemo(){
-  consumeTrigger(); // reset nemo
-  while(!digitalRead(CONFIRM) && !consumeTrigger()){
+  navi.consumeNemoTrigger(); // reset nemo
+  while(!digitalRead(CONFIRM) && !navi.consumeNemoTrigger()){
     navi.start(MOTOR_BASE_SPEED,-MOTOR_BASE_SPEED);
   }
   navi.stop();
@@ -169,19 +179,25 @@ void setBinWithPot(){
   }
 }
 
-void straightUntilNemo(){
-  consumeTrigger(); // reset nemo
+void straightUntilNemo(int startSide){
   double kd = 0;
   double kp = 0;
   double gain = 0.5;  
-  while(!digitalRead(CONFIRM) && !consumeTrigger()){
+
+  while(!digitalRead(CONFIRM)){
     kp = analogRead(DEBUG_POT) * gain / 5000.0;
-    sprintf(buffer, "kp: %.4f", kp);
+    sprintf(buffer, "Setting kp: %d\n\nUP to run\nDOWN to exit", analogRead(DEBUG_POT));
     printToDisplay(buffer);
-    navi.correctToTape(MOTOR_BASE_SPEED,MOTOR_BASE_SPEED,kp,kd);
-    delay(50);
+    if(digitalRead(CYCLE)){
+      return;
+    }
+    delay(5);
   }
-  navi.stop();
+  navi.tapeFollowUntilNemo(MOTOR_BASE_SPEED, MOTOR_BASE_SPEED, kp, kd);
+}
+
+void straightUntilNemoOnRight(){
+  straightUntilNemo(TapeSide::RIGHT);
   printToDisplay("Done!");
   delay(2000);
 }
