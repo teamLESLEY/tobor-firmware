@@ -12,7 +12,6 @@
 #include "navigation.hpp"
 #include "config.h"
 #include "menu.hpp"
-#include "debug_funcs.hpp"
 
 #define CONFIRM DEBUG_UP
 #define CYCLE DEBUG_DOWN
