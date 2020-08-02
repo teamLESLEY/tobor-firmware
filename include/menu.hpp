@@ -3,7 +3,6 @@
 
 #include <string>
 #include <vector>
-#include <Wire.h>
 #include <Adafruit_SSD1306.h>
 #include <Arduino.h>
 
@@ -18,7 +17,7 @@ public:
     std::vector<std::string> options;
     std::vector<callback_function_t> callbacks;
     unsigned int selected;
-    
+
     Menu(std::string menuName, std::vector<std::string> options, std::vector<callback_function_t> callbacks);
     unsigned int select();
     void cycle();

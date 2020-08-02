@@ -1,7 +1,7 @@
 #ifndef TAPE_HPP
 #define TAPE_HPP
 
-#include <Wire.h>
+#include <Arduino.h>
 
 class TapeSensor {
   const PinName LEFT_SENSOR;

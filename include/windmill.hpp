@@ -22,7 +22,7 @@ public:
 
     void setup();
     void start();
-    
+
     /*
     * Sets PWM duty cycle for "on" segments of windmill. speed: [0 ... 1023]
     */
@@ -31,12 +31,12 @@ public:
     void detach();
 };
 
-inline Windmill windmill(    
-    WINDMILL, 
-    WINDMILL_PULSE_PERIOD, 
-    WINDMILL_SPEED, 
-    WINDMILL_PULSE_DUTYCYCLE, 
-    WINDMILL_TIMER_PIN, 
+inline Windmill windmill(
+    WINDMILL,
+    WINDMILL_PULSE_PERIOD,
+    WINDMILL_SPEED,
+    WINDMILL_PULSE_DUTYCYCLE,
+    WINDMILL_TIMER_PIN,
     HardwareTimer(TIM1)
 );
 
