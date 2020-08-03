@@ -25,7 +25,7 @@ public:
     unsigned int selected;
 
   Menu(std::string menuName, MenuOptions options);
-    unsigned int select();
+  void select();
     void cycle();
     void show(Adafruit_SSD1306 display);
 

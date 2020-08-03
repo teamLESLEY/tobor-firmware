@@ -56,7 +56,7 @@ void straightUntilNemo(int startSide);
 void setup();
 void loop();
 void subroutineMenu();
-unsigned int getMenuSelection(Menu menu);
+void getMenuSelection(Menu menu);
 void emptyFunc();
 void printToDisplay(const char *str);
 

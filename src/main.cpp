@@ -58,8 +58,7 @@ void setup(){
 
 
 void loop() {
-  unsigned int choice = getMenuSelection(mainMenu);
-  mainMenu.options[choice].callback();
+  getMenuSelection(mainMenu);
 
   printToDisplay("Returning to \nMain Menu");
   delay(MENU_WAIT_TIME);
@@ -166,7 +165,7 @@ void straightUntilNemoOnRight(){
   delay(1000);
 }
 
-unsigned int getMenuSelection(Menu menu){
+void getMenuSelection(Menu menu) {
   menu.show(display);
   while(!digitalRead(CONFIRM)){
     if(digitalRead(CYCLE)){
@@ -178,13 +177,11 @@ unsigned int getMenuSelection(Menu menu){
   // for unknown reasons, menu fails in second iteration unless this is included.
   printToDisplay("Loading...");
   delay(MENU_WAIT_TIME);
-  return menu.select();
+  menu.select();
 }
 
-void subroutineMenu(){
-  int choice = getMenuSelection(subMenu);
-  callback_function_t func = subMenu.options[choice].callback;
-  func();
+void subroutineMenu() {
+  getMenuSelection(subMenu);
 }
 
 void raiseBinOnDetect(){

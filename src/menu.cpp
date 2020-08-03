@@ -8,8 +8,8 @@ Menu::Menu(string menuName, MenuOptions options)
   selected = 0;
 }
 
-unsigned int Menu::select() {
-  return selected;
+void Menu::select() {
+  options[selected].callback();
 }
 
 void Menu::cycle() {
