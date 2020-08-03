@@ -269,9 +269,7 @@ void getMenuSelection(Menu menu) {
     }
   }
 
-  // for unknown reasons, menu fails in second iteration unless this is included.
-  printToDisplay("Loading...");
-  delay(MENU_WAIT_TIME);
+  while (digitalRead(CONFIRM)); // Wait until CONFIRM is released
   menu.select();
 }
 
