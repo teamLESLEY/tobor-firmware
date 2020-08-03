@@ -1,32 +1,117 @@
 #include "main.hpp"
 
+int debugToneNum = 0;
+bool debugging = true;
+
+void debugTone(){
+  if(debugToneNum % 12 != 4 && debugToneNum % 12 != 11){
+    debugToneNum++;
+  }
+  debugToneNum++;
+  int freq = 440 * pow(2, debugToneNum / 12.0);
+  tone(SOPRANO, freq);
+}
+
+void finisher(){
+  
+  tiltBin();
+  windmill.stop();
+  
+  // pivot (absorb 3 tape passes, waiting 100 ms afer each pass)
+  for(int i = 0; i < 3; i++){
+    navi.driveUntilDory(MOTOR_BASE_SPEED, -MOTOR_BASE_SPEED, 200);
+  }
+  // reverse to bin
+  navi.driveUntilDory(-MOTOR_BASE_SPEED, -MOTOR_BASE_SPEED, 100);
+  delay(300);
+  raiseBin();
+  delay(5000);
+  binServo.detach();
+}
+
+void rightTurn(){
+  navi.driveUntilNemo(R_TURN_L_MOTOR_SPEED, R_TURN_R_MOTOR_SPEED);
+  navi.driveUntilDory(MOTOR_BASE_SPEED, MOTOR_BASE_SPEED/2); // recovery
+}
+
+void straight(){
+  navi.tapeFollowUntilNemo(MOTOR_BASE_SPEED, MOTOR_BASE_SPEED, kp, kd);
+}
+
+void perimeter(){
+  straight();
+  rightTurn();
+  straight();
+  rightTurn();
+  straight();
+  rightTurn();
+  straight();
+}
+
+
+void waitForConfirm(){
+  if (debugging){
+    printToDisplay("Waiting for confirm\n (UP)");
+    while (!digitalRead(CONFIRM))
+    ;
+  }
+}
+
+void rightSwitchback(){
+  //printToDisplay("Stage 0");
+  //navi.tapeFollowUntilNemo(MOTOR_BASE_SPEED, MOTOR_BASE_SPEED, kp, kd);
+  printToDisplay("Stage 1");
+
+  navi.tapeFollowUntilNemo(MOTOR_BASE_SPEED, MOTOR_BASE_SPEED, kp, kd);
+  waitForConfirm();
+  // (2) ignore second nemo and continue as before
+  //navi.tapeFollowUntilNemo(MOTOR_BASE_SPEED/2, MOTOR_BASE_SPEED/2, kp, kd);
+  printToDisplay("Stage 2");
+  // (3) start turn when hitting surface boundary
+  navi.driveUntilNemo(R_TURN_L_MOTOR_SPEED, R_TURN_R_MOTOR_SPEED);
+  waitForConfirm();
+  printToDisplay("Stage 3");
+  // (4) continue turning after reentering surface
+  navi.driveUntilNemo(R_TURN_L_MOTOR_SPEED, R_TURN_R_MOTOR_SPEED);
+  waitForConfirm();
+  printToDisplay("Stage 4");
+  // (4) hits nemo and signals turn is ending soon; enter recovery
+  navi.driveUntilDory(MOTOR_BASE_SPEED, MOTOR_BASE_SPEED/3);
+  printToDisplay("Stage 5");
+  // (5) dory reaches tape and begins normal tape following
+}
+
+void leftSwitchback(){
+
+  // skip first nemo and continue straight
+  navi.tapeFollowUntilNemo(MOTOR_BASE_SPEED, MOTOR_BASE_SPEED, kp, kd);
+
+    // exit surface and begin turn
+  navi.driveUntilDory(L_TURN_L_MOTOR_SPEED, L_TURN_R_MOTOR_SPEED, 500); 
+  // detect when Dory hits surface edge, and continue turn
+  navi.driveUntilDory(L_TURN_L_MOTOR_SPEED, L_TURN_R_MOTOR_SPEED, 400);
+
+  // dory passes perpendicular path
+  navi.driveUntilNemo(L_TURN_L_MOTOR_SPEED, L_TURN_R_MOTOR_SPEED);
+
+  // after hitting nemo flag, enter recovery
+  navi.driveUntilDory(MOTOR_BASE_SPEED/3, MOTOR_BASE_SPEED, 50);
+
+  //with luck, is now on tape
+}
 
 void runCompetition(){
-  double kp = 0.02;
-  double kd = 0;
+
   printToDisplay("Running Competition\n:)");
   delay(200);
 
-  //navi.tapeFollowUntilNemo(MOTOR_BASE_SPEED, MOTOR_BASE_SPEED, kp, kd);
-
-
-  /*straightUntilNemo(TapeSide::RIGHT);
-  rightUntilNemo();
-  straightUntilNemo(TapeSide::LEFT);*/
-  /*
-  wm.currentSpeed = wm.targetSpeed;
-  straightUntilNemo();
-  rightUntilNemo();
-  straightUntilNemo();
-  leftUntilNemo();
-  straightUntilNemo();
-  rightUntilNemo();
-  straightUntilNemo();
-  rightUntilNemo();
-  straightUntilNemo();
-  pivotUntilNemo();
-  wm.currentSpeed = 0;
-  raiseBinOnDetect();*/
+  straight();
+  rightSwitchback();
+  straight();
+  leftSwitchback();
+  straight();
+  rightSwitchback();
+  straight();
 }
 
 void runEntertainment(){
@@ -36,6 +121,9 @@ void runEntertainment(){
 
 void setup(){
   // loadValues();
+
+  kp = K_PROPORTIONAL / 10000.0;
+  kd = K_DERIVATIVE / 100.0;
 
   display.begin(SSD1306_SWITCHCAPVCC, 0x3C);
   display.clearDisplay();
@@ -68,6 +156,11 @@ void loop() {
 
 void lowerBin(){
   binServo.write(BIN_MIN);
+}
+
+void tiltBin(){
+  binServo.attach(BIN_SERVO);
+  binServo.write((BIN_MAX + 2 * BIN_MIN) / 3);
 }
 
 void raiseBin(){
@@ -150,7 +243,7 @@ void straightUntilNemo(int startSide){
 
   while(!digitalRead(CONFIRM)){
     kp = analogRead(DEBUG_POT) * gain / 5000.0;
-    sprintf(buffer, "Setting kp: %d\n\nUP to run\nDOWN to exit", analogRead(DEBUG_POT));
+    sprintf(buffer, "Setting kp: %d\n\nUP to run\nDOWN to exit", (int) analogRead(DEBUG_POT));
     printToDisplay(buffer);
     if(digitalRead(CYCLE)){
       return;

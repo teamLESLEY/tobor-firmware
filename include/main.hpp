@@ -31,6 +31,9 @@ Motor::Navigator navi(motorL, motorR, tape, NEMO);
 
 Servo binServo; 
 
+double kp;
+double kd;
+
 using std::vector;
 using std::string;
 
@@ -40,13 +43,11 @@ void loadValues();
 void runCompetition();
 void runEntertainment();
 
-void nemoDetect();
-bool consumeTrigger();
-
 void setWindmillWithPot();
 
 void lowerBin();
 void raiseBin();
+void tiltBin();
 void setBinWithPot();
 void raiseBinOnDetect();
 
