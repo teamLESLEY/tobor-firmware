@@ -146,9 +146,8 @@ void setup(){
 
 
 void loop() {
-  unsigned int choice = getMenuSelection(mainMenu);
-  mainMenu.callbacks[choice]();
-  
+  getMenuSelection(mainMenu);
+
   printToDisplay("Returning to \nMain Menu");
   delay(MENU_WAIT_TIME);
 }
@@ -184,7 +183,7 @@ void pivotUntilNemo(){
 
 void printSensorReadings(){
   while(!digitalRead(CONFIRM)){
-    sprintf(buffer, 
+    sprintf(buffer,
       "Tape L: %d\nTape R: %d\n\nNemo: %d",
       tape.getLeftReading(),
       tape.getRightReading(),
@@ -198,7 +197,7 @@ void setWindmillWithPot(){
   int speed = analogRead(DEBUG_POT);
   while(!digitalRead(CONFIRM) && !digitalRead(CYCLE)){
     speed = analogRead(DEBUG_POT);
-    sprintf(buffer, 
+    sprintf(buffer,
       "Windmill power: %d\n\nUP to save\nDOWN to stop",
       speed);
     printToDisplay(buffer);
@@ -239,7 +238,7 @@ void setRightMotorWithPot(){
 void straightUntilNemo(int startSide){
   double kd = 0;
   double kp = 0;
-  double gain = 0.5;  
+  double gain = 0.5;
 
   while(!digitalRead(CONFIRM)){
     kp = analogRead(DEBUG_POT) * gain / 5000.0;
@@ -259,32 +258,31 @@ void straightUntilNemoOnRight(){
   delay(1000);
 }
 
-unsigned int getMenuSelection(Menu menu){
+void getMenuSelection(Menu menu) {
   menu.show(display);
-  while(!digitalRead(CONFIRM)){
-    if(digitalRead(CYCLE)){
+  while (!digitalRead(CONFIRM)) {
+    if (digitalRead(CYCLE)) {
       menu.cycle();
       menu.show(display);
       delay(CYCLE_WAIT_TIME);
     }
   }
-  // for unknown reasons, menu fails in second iteration unless this is included. 
+
+  // for unknown reasons, menu fails in second iteration unless this is included.
   printToDisplay("Loading...");
   delay(MENU_WAIT_TIME);
-  return menu.select();
+  menu.select();
 }
 
-void subroutineMenu(){
-  int choice = getMenuSelection(subMenu);
-  callback_function_t func = subMenu.callbacks[choice];
-  func();
+void subroutineMenu() {
+  getMenuSelection(subMenu);
 }
 
 void raiseBinOnDetect(){
   while(!digitalRead(BIN_DETECT_L) || !digitalRead(BIN_DETECT_R)){
     sprintf(buffer,
-      "Left: %d\nRight: %d", 
-      digitalRead(BIN_DETECT_L), 
+      "Left: %d\nRight: %d",
+      digitalRead(BIN_DETECT_L),
       digitalRead(BIN_DETECT_R));
     printToDisplay(buffer);
     motorL.setSpeed(- MOTOR_BASE_SPEED * (!digitalRead(BIN_DETECT_L)));
@@ -313,7 +311,7 @@ void emptyFunc(){
 }
 
 void saveValues(){
-  
+
   // drive
   // kp
   // kd
@@ -329,7 +327,7 @@ void saveValues(){
   // speed
   // period
   // duty cycle
-  
+
   // bin
   // min
   // max
@@ -351,7 +349,7 @@ void loadValues(){
   // speed
   // period
   // duty cycle
-  
+
   // bin
   // min
   // max
