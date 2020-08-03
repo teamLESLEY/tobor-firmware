@@ -16,8 +16,8 @@
 #define BIN_SERVO PB7
 #define BIN_DETECT_L PB4
 #define BIN_DETECT_R PA8
-#define BIN_MIN 60      // run "Set bin with pot" subroutine to determine min angle
-#define BIN_MAX 130     // run "Set bin with pot" subroutine to determine max angle
+#define BIN_MIN 33      // run "Set bin with pot" subroutine to determine min angle
+#define BIN_MAX 150     // run "Set bin with pot" subroutine to determine max angle
 
 #define DISPLAY_SDA PB11
 #define DISPLAY_SCL PB10

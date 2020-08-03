@@ -31,6 +31,9 @@ Motor::Navigator navi(motorL, motorR, tape, NEMO);
 
 Servo binServo; 
 
+double kp;
+double kd;
+
 using std::vector;
 using std::string;
 
@@ -45,6 +48,7 @@ bool consumeTrigger();
 
 void setWindmillWithPot();
 
+void tiltBin();
 void lowerBin();
 void raiseBin();
 void setBinWithPot();

@@ -7,8 +7,8 @@ namespace Motor {
   enum class Direction {Forward, Reverse, Stop};
 
   class DCMotor {
-    static const unsigned int PWM_FREQ = 2000;
-    static const unsigned int PWM_MAX = 1024;
+    static const unsigned int PWM_FREQ = 200;
+    static const unsigned int PWM_MAX = 1023;
 
     const PinName FORWARD_PIN;
     const PinName REVERSE_PIN;

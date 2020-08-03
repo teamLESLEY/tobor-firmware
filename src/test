@@ -1,0 +1,13 @@
+HardwareTimer windmillTimer(TIM1);
+Windmill wm(    
+    WINDMILL, 
+    WINDMILL_PULSE_PERIOD, 
+    WINDMILL_SPEED, 
+    WINDMILL_PULSE_DUTYCYCLE, 
+    WINDMILL_TIMER_PIN, 
+    windmillTimer;
+);
+wm.setSpeed(1023);
+wm.start();
+delay(5000);
+wm.stop()

@@ -18,7 +18,7 @@ public:
     int timerPin;
     HardwareTimer timer;
 
-    Windmill(int, int, int, int, int, HardwareTimer);
+    Windmill(int outputPin, int period, int targetSpeed, int dutycycle, int timerPin, HardwareTimer timer);
 
     void setup();
     void start();

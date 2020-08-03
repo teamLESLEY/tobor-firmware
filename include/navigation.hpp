@@ -9,8 +9,6 @@ namespace Motor{
 
     class Navigator {
 
-        
-
         const int ERROR_ONE_OFF = 2;
         const int ERROR_BOTH_OFF = 10;
 
