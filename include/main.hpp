@@ -4,9 +4,6 @@
 #include <Wire.h>
 #include <Adafruit_SSD1306.h>
 #include <Servo.h>
-#include <vector>
-#include <string>
-#include <stdarg.h>
 #include "tape.hpp"
 #include "motor.hpp"
 #include "navigation.hpp"
@@ -69,38 +66,33 @@ void hBridgeTest();
 
 
 // Main Menu definition
-const vector<string> mainOpts{"Run Competition", "Entertainment", "Set Values", "Run Subroutines"};
-const vector<callback_function_t> mainCallbacks{runCompetition, runEntertainment, emptyFunc, subroutineMenu};
-Menu mainMenu("Main Menu", mainOpts, mainCallbacks);
+Menu mainMenu(
+  "Main Menu",
+  {
+    {"Run Competition", runCompetition},
+    {"Entertainment", runEntertainment},
+    {"Set Values", emptyFunc},
+    {"Run Subroutines", subroutineMenu},
+  }
+);
 
 // Subroutine Menu definition
-const vector<string> subOpts{
-  "Straight until Nemo",
-  "Right until Nemo",
-  "Left until Nemo",
-  "Pivot until Nemo",
-  "Set windmill with pot",
-  "Set bin with pot",
-  "Bin raise on detect",
-  "Raise bin",
-  "Lower bin",
-  "Show sensor readings",
-  "Run motors fwd/back",
-  "Back"
-  };
-const vector<callback_function_t> subCallbacks{
-  straightUntilNemoOnRight, 
-  rightUntilNemo, 
-  leftUntilNemo, 
-  pivotUntilNemo,
-  setWindmillWithPot,
-  setBinWithPot,
-  raiseBinOnDetect,
-  raiseBin,
-  lowerBin,
-  printSensorReadings,
-  hBridgeTest,
-  emptyFunc};
-Menu subMenu("Subroutines", subOpts, subCallbacks);
+Menu subMenu(
+  "Subroutines",
+  {
+    {"Straight until Nemo", straightUntilNemoOnRight},
+    {"Right until Nemo", rightUntilNemo},
+    {"Left until Nemo", leftUntilNemo},
+    {"Pivot until Nemo", pivotUntilNemo},
+    {"Set windmill with pot", setWindmillWithPot},
+    {"Set bin with pot", setBinWithPot},
+    {"Bin raise on detect", raiseBinOnDetect},
+    {"Raise bin", raiseBin},
+    {"Lower bin", lowerBin},
+    {"Show sensor readings", printSensorReadings},
+    {"Run motors fwd/back", hBridgeTest},
+    {"Back", emptyFunc},
+  }
+);
 
 #endif

@@ -3,8 +3,8 @@
 using std::string;
 using std::vector;
 
-Menu::Menu(string menuName, vector<string> options, vector<callback_function_t> callbacks)
-  : menuName(menuName), options(options), callbacks(callbacks){
+Menu::Menu(string menuName, MenuOptions options)
+  : menuName(menuName), options(options) {
   selected = 0;
 }
 
@@ -12,7 +12,7 @@ unsigned int Menu::select() {
   return selected;
 }
 
-void Menu::cycle(){
+void Menu::cycle() {
   selected++;
   if (selected >= options.size()){
     selected = 0;
@@ -38,10 +38,10 @@ void Menu::updateDisplay(Adafruit_SSD1306 display) {
   for (unsigned int i = topLine; i < topLine + displayedLines && i < options.size(); i++){
     if(i == selected){
       display.setTextColor(SSD1306_BLACK, SSD1306_WHITE);
-      display.println(options[i].c_str());
+      display.println(options[i].name.c_str());
       display.setTextColor(SSD1306_WHITE, SSD1306_BLACK);
     } else {
-      display.println(options[i].c_str());
+      display.println(options[i].name.c_str());
     }
   }
   display.display();
