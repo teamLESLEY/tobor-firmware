@@ -26,7 +26,6 @@ Motor::DCMotor motorL(MOTOR_L_FORWARD, MOTOR_L_REVERSE, MIN_PWM_LEFT);
 Motor::DCMotor motorR(MOTOR_R_FORWARD, MOTOR_R_REVERSE, MIN_PWM_RIGHT);
 Motor::Navigator navi(motorL, motorR, tape, NEMO);
 
-<<<<<<< HEAD
 Servo binServo; 
 
 double kp;
@@ -34,13 +33,11 @@ double kd;
 
 using std::vector;
 using std::string;
-=======
-Servo binServo;
->>>>>>> 49638f80ecb4781594012709e1feebec18af2af4
 
 void saveValues();
 void loadValues();
 
+void debugCompetition();
 void runCompetition();
 void runEntertainment();
 
@@ -55,6 +52,8 @@ void raiseBinOnDetect();
 void leftUntilNemo();
 void rightUntilNemo();
 void pivotUntilNemo();
+void leftSwitchback();
+void rightSwitchback();
 void straightUntilNemoOnRight();
 void straightUntilNemo(int startSide);
 
@@ -75,6 +74,7 @@ Menu mainMenu(
   "Main Menu",
   {
     {"Run Competition", runCompetition},
+    {"Debug Competition", debugCompetition},
     {"Entertainment", runEntertainment},
     {"Set Values", emptyFunc},
     {"Run Subroutines", subroutineMenu},
@@ -89,6 +89,8 @@ Menu subMenu(
     {"Right until Nemo", rightUntilNemo},
     {"Left until Nemo", leftUntilNemo},
     {"Pivot until Nemo", pivotUntilNemo},
+    {"Right switchback", rightSwitchback},
+    {"Left switchback", leftSwitchback},
     {"Set windmill with pot", setWindmillWithPot},
     {"Set bin with pot", setBinWithPot},
     {"Bin raise on detect", raiseBinOnDetect},

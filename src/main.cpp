@@ -1,7 +1,7 @@
 #include "main.hpp"
 
 int debugToneNum = 0;
-bool debugging = true;
+bool debugging = false;
 
 void debugTone(){
   if(debugToneNum % 12 != 4 && debugToneNum % 12 != 11){
@@ -61,7 +61,6 @@ void rightSwitchback(){
   //printToDisplay("Stage 0");
   //navi.tapeFollowUntilNemo(MOTOR_BASE_SPEED, MOTOR_BASE_SPEED, kp, kd);
   printToDisplay("Stage 1");
-
   navi.tapeFollowUntilNemo(MOTOR_BASE_SPEED, MOTOR_BASE_SPEED, kp, kd);
   waitForConfirm();
   // (2) ignore second nemo and continue as before
@@ -100,18 +99,28 @@ void leftSwitchback(){
   //with luck, is now on tape
 }
 
-void runCompetition(){
-
-  printToDisplay("Running Competition\n:)");
+void competition(){
   delay(200);
 
   straight();
   rightSwitchback();
   straight();
-  leftSwitchback();
+  /*leftSwitchback();
   straight();
   rightSwitchback();
-  straight();
+  straight();*/
+}
+
+void debugCompetition(){
+  printToDisplay("Debugging Competition\n:)");
+  debugging = true;
+  competition();
+}
+
+void runCompetition(){
+  printToDisplay("Running Competition\n:)");
+  debugging = false;
+  competition();
 }
 
 void runEntertainment(){
@@ -167,7 +176,6 @@ void raiseBin(){
   binServo.write(BIN_MAX);
 }
 
-
 void leftUntilNemo(){
   navi.driveUntilNemo(L_TURN_L_MOTOR_SPEED, L_TURN_R_MOTOR_SPEED);
 }
@@ -222,13 +230,6 @@ void setBinWithPot(){
 }
 
 void setLeftMotorWithPot(){
-  binServo.attach(BIN_SERVO);
-  while(!digitalRead(CONFIRM)){
-    int angle = (int)analogRead(DEBUG_POT) * 180 / 1023;
-    sprintf(buffer, "Bin angle: %d", angle);
-    printToDisplay(buffer);
-    binServo.write(angle);
-  }
 }
 
 void setRightMotorWithPot(){
@@ -236,12 +237,12 @@ void setRightMotorWithPot(){
 }
 
 void straightUntilNemo(int startSide){
-  double kd = 0;
-  double kp = 0;
+  double kderiv = 0;
+  double kprop = 0;
   double gain = 0.5;
 
   while(!digitalRead(CONFIRM)){
-    kp = analogRead(DEBUG_POT) * gain / 5000.0;
+    kprop = analogRead(DEBUG_POT) * gain / 5000.0;
     sprintf(buffer, "Setting kp: %d\n\nUP to run\nDOWN to exit", (int) analogRead(DEBUG_POT));
     printToDisplay(buffer);
     if(digitalRead(CYCLE)){
@@ -249,7 +250,7 @@ void straightUntilNemo(int startSide){
     }
     delay(5);
   }
-  navi.tapeFollowUntilNemo(MOTOR_BASE_SPEED, MOTOR_BASE_SPEED, kp, kd);
+  navi.tapeFollowUntilNemo(MOTOR_BASE_SPEED, MOTOR_BASE_SPEED, kprop, kderiv,startSide);
 }
 
 void straightUntilNemoOnRight(){
@@ -334,24 +335,4 @@ void saveValues(){
 }
 
 void loadValues(){
-  // drive
-  // kp
-  // kd
-  // gain
-  // base speed left (straight)
-  // base speed right (straight)
-  // base speed left (l turn)
-  // base speed right (l turn)
-  // base speed left (r turn)
-  // base speed right (r turn)
-
-  // windmill
-  // speed
-  // period
-  // duty cycle
-
-  // bin
-  // min
-  // max
-
 }

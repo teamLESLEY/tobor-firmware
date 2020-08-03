@@ -28,8 +28,8 @@ void Menu::updateDisplay(Adafruit_SSD1306 display) {
 
   unsigned int displayedLines = (display.height() / 8) - 1;
   unsigned int topLine = 0;
-  if (selected >= displayedLines) {
-    topLine = selected - displayedLines + 1;
+  if (selected >= displayedLines - 1) {
+    topLine = selected - displayedLines + 2;
   }
 
   for (unsigned int i = topLine; i < min(topLine + displayedLines, options.size()); i++) {
