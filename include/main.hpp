@@ -26,10 +26,7 @@ Motor::DCMotor motorL(MOTOR_L_FORWARD, MOTOR_L_REVERSE, MIN_PWM_LEFT);
 Motor::DCMotor motorR(MOTOR_R_FORWARD, MOTOR_R_REVERSE, MIN_PWM_RIGHT);
 Motor::Navigator navi(motorL, motorR, tape, NEMO);
 
-Servo binServo; 
-
-using std::vector;
-using std::string;
+Servo binServo;
 
 void saveValues();
 void loadValues();

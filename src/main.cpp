@@ -167,13 +167,14 @@ void straightUntilNemoOnRight(){
 
 void getMenuSelection(Menu menu) {
   menu.show(display);
-  while(!digitalRead(CONFIRM)){
-    if(digitalRead(CYCLE)){
+  while (!digitalRead(CONFIRM)) {
+    if (digitalRead(CYCLE)) {
       menu.cycle();
       menu.show(display);
       delay(CYCLE_WAIT_TIME);
     }
   }
+
   // for unknown reasons, menu fails in second iteration unless this is included.
   printToDisplay("Loading...");
   delay(MENU_WAIT_TIME);

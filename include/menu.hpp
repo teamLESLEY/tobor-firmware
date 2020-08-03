@@ -6,9 +6,6 @@
 #include <Adafruit_SSD1306.h>
 #include <Arduino.h>
 
-#define SCREEN_WIDTH 128
-#define SCREEN_HEIGHT 64
-
 struct MenuLine {
   std::string name;
   callback_function_t callback;
@@ -17,20 +14,17 @@ struct MenuLine {
 typedef std::vector<struct MenuLine> MenuOptions;
 
 class Menu {
+  std::string menuName;
+  MenuOptions options;
+  unsigned int selected;
+
+  void updateDisplay(Adafruit_SSD1306 display);
 
 public:
-
-    std::string menuName;
-  MenuOptions options;
-    unsigned int selected;
-
   Menu(std::string menuName, MenuOptions options);
   void select();
-    void cycle();
-    void show(Adafruit_SSD1306 display);
-
-private:
-    void updateDisplay(Adafruit_SSD1306 display);
+  void cycle();
+  void show(Adafruit_SSD1306 display);
 };
 
 #endif
