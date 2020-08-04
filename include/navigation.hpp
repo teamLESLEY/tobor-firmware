@@ -35,8 +35,8 @@ namespace Motor {
         bool consumeNemoTrigger();
 
         void drive(double motorL_speed, double motorR_speed, unsigned int millis);
-        void driveUntilNemo(double lspeed, double rspeed, int bufferTime = 0);
-        void driveUntilDory(double lspeed, double rspeed, int bufferTime = 0);
+        void driveUntilNemo(double lspeed, double rspeed, int bufferTime = 10);
+        void driveUntilDory(double lspeed, double rspeed, int bufferTime = 10);
         void start(double motorL_speed, double motorR_speed);
         void stop();
     };
