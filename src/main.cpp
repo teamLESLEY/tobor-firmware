@@ -1,11 +1,31 @@
 #include "main.hpp"
 
+int debugToneNum = 0;
+bool debugging = false;
+
+//inline unsigned int currentSpeed;
+Windmill windmill(
+    WINDMILL,
+    WINDMILL_PULSE_PERIOD,
+    WINDMILL_PULSE_DUTYCYCLE,
+    WINDMILL_TIMER_PIN,
+    HardwareTimer(TIM1)
+);
+
+void debugTone(){
+  if(debugToneNum % 12 != 4 && debugToneNum % 12 != 11){
+    debugToneNum++;
+  }
+  debugToneNum++;
+  int freq = 440 * pow(2, debugToneNum / 12.0);
+  //tone(SOPRANO, freq);
+}
 
 void finisher(){
-  
+
   tiltBin();
   windmill.stop();
-  
+
   // pivot (absorb 3 tape passes, waiting 100 ms afer each pass)
   for(int i = 0; i < 3; i++){
     navi.driveUntilDory(MOTOR_BASE_SPEED, -MOTOR_BASE_SPEED, 200);
@@ -58,11 +78,12 @@ void switchback1(){
   // (5) dory reaches tape and begins normal tape following
 }
 
+
 void runCompetition(){
 
   printToDisplay("Running Competition\n:)");
   delay(200);
-  
+
   //switchback1();
   //straight();
 }
@@ -101,7 +122,7 @@ void setup(){
 void loop() {
   unsigned int choice = getMenuSelection(mainMenu);
   mainMenu.callbacks[choice]();
-  
+
   printToDisplay("Returning to \nMain Menu");
   delay(MENU_WAIT_TIME);
 }
@@ -137,7 +158,7 @@ void pivotUntilNemo(){
 
 void printSensorReadings(){
   while(!digitalRead(CONFIRM)){
-    sprintf(buffer, 
+    sprintf(buffer,
       "Tape L: %d\nTape R: %d\n\nNemo: %d",
       tape.getLeftReading(),
       tape.getRightReading(),
@@ -151,16 +172,15 @@ void setWindmillWithPot(){
   int speed = analogRead(DEBUG_POT);
   while(!digitalRead(CONFIRM) && !digitalRead(CYCLE)){
     speed = analogRead(DEBUG_POT);
-    sprintf(buffer, 
+    sprintf(buffer,
       "Windmill power: %d\n\nUP to save\nDOWN to stop",
       speed);
     printToDisplay(buffer);
-    windmill.currentSpeed = speed;
+    currentSpeed = speed;
   }
   if(digitalRead(CYCLE)){
-    windmill.currentSpeed = 0;
+    currentSpeed = 0;
   } else if(digitalRead(CONFIRM)){
-    windmill.setSpeed(speed);
     saveValues();
   }
 }
@@ -192,7 +212,7 @@ void setRightMotorWithPot(){
 void straightUntilNemo(int startSide){
   double kd = 0;
   double kp = 0;
-  double gain = 0.5;  
+  double gain = 0.5;
 
   while(!digitalRead(CONFIRM)){
     kp = analogRead(DEBUG_POT) * gain / 5000.0;
@@ -221,7 +241,8 @@ unsigned int getMenuSelection(Menu menu){
       delay(CYCLE_WAIT_TIME);
     }
   }
-  // for unknown reasons, menu fails in second iteration unless this is included. 
+
+  // for unknown reasons, menu fails in second iteration unless this is included.
   printToDisplay("Loading...");
   delay(MENU_WAIT_TIME);
   return menu.select();
@@ -236,8 +257,8 @@ void subroutineMenu(){
 void raiseBinOnDetect(){
   while(!digitalRead(BIN_DETECT_L) || !digitalRead(BIN_DETECT_R)){
     sprintf(buffer,
-      "Left: %d\nRight: %d", 
-      digitalRead(BIN_DETECT_L), 
+      "Left: %d\nRight: %d",
+      digitalRead(BIN_DETECT_L),
       digitalRead(BIN_DETECT_R));
     printToDisplay(buffer);
     motorL.setSpeed(- MOTOR_BASE_SPEED * (!digitalRead(BIN_DETECT_L)));
@@ -266,7 +287,7 @@ void emptyFunc(){
 }
 
 void saveValues(){
-  
+
   // drive
   // kp
   // kd
@@ -282,7 +303,7 @@ void saveValues(){
   // speed
   // period
   // duty cycle
-  
+
   // bin
   // min
   // max
@@ -304,7 +325,7 @@ void loadValues(){
   // speed
   // period
   // duty cycle
-  
+
   // bin
   // min
   // max
