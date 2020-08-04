@@ -8,10 +8,12 @@ struct Windmill {
   int targetSpeed;
   int period; // milliseconds
   int dutycycle;
-  int timerPin;
+  uint32_t outputPin;
+  uint32_t timerPin;
   HardwareTimer timer;
 };
 
+void setupWindmill(Windmill& wm);
 void windmillPulseHigh(uint32_t pin, unsigned int speed);
 void windmillPulseLow(uint32_t pin);
 

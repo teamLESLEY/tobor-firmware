@@ -6,6 +6,7 @@ Windmill wm{
   WINDMILL_SPEED,
   WINDMILL_PULSE_PERIOD,
   WINDMILL_PULSE_DUTYCYCLE,
+  WINDMILL,
   WINDMILL_TIMER_PIN,
   HardwareTimer(TIM1)
 };
@@ -53,29 +54,12 @@ void setup(){
   pinMode(NEMO, INPUT_PULLUP);
   attachInterrupt(NEMO, nemoDetect, FALLING);
 
-  // Windmill Setup
-  pinMode(WINDMILL, OUTPUT);
-  uint32_t channel = STM_PIN_CHANNEL(
-    pinmap_function(digitalPinToPinName(WINDMILL_TIMER_PIN), PinMap_PWM));
-  pwm_start(digitalPinToPinName(WINDMILL), 256, wm.currentSpeed, RESOLUTION_10B_COMPARE_FORMAT);
-  wm.timer.pause();
-  wm.timer.setPWM(
-    channel,
-    WINDMILL_TIMER_PIN,
-    1,
-    wm.dutycycle,
-    []() -> void {windmillPulseLow(WINDMILL);},
-    [&]() -> void {windmillPulseHigh(WINDMILL, wm.currentSpeed);}
-  );
-  // sets period of timer (rather than freq, to allow for periods of > 1 sec)
-  wm.timer.setOverflow(1000 * wm.period, MICROSEC_FORMAT);
-  wm.timer.resumeChannel(channel);
+  setupWindmill(wm);
 
   // if servo is connected to same power supply as BP, do not run this block
   //binServo.attach(BIN_SERVO);
   //binServo.write(BIN_MIN);
 }
-
 
 void loop() {
   unsigned int choice = getMenuSelection(mainMenu);
