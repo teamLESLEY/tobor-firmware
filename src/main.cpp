@@ -47,13 +47,13 @@ void setup(){
   // Windmill Setup
   pinMode(WINDMILL, OUTPUT);
   uint32_t channel = STM_PIN_CHANNEL(
-    pinmap_function(digitalPinToPinName(WINDMILL_TIMER_PIN), PinMap_PWM));  
+    pinmap_function(digitalPinToPinName(WINDMILL_TIMER_PIN), PinMap_PWM));
   pwm_start(digitalPinToPinName(WINDMILL), 256, wm.currentSpeed, RESOLUTION_10B_COMPARE_FORMAT);
   wm.timer.pause();
-  wm.timer.setPWM(channel, WINDMILL_TIMER_PIN, 1, wm.dutycycle, 
-    windmillPulseLow, windmillPulseHigh); 
+  wm.timer.setPWM(channel, WINDMILL_TIMER_PIN, 1, wm.dutycycle,
+                  windmillPulseLow, [&]() -> void {windmillPulseHigh(wm.currentSpeed);});
   // sets period of timer (rather than freq, to allow for periods of > 1 sec)
-  wm.timer.setOverflow(1000 * wm.period, MICROSEC_FORMAT); 
+  wm.timer.setOverflow(1000 * wm.period, MICROSEC_FORMAT);
   wm.timer.resumeChannel(channel);
 
   // if servo is connected to same power supply as BP, do not run this block
@@ -122,8 +122,8 @@ bool consumeTrigger(){
   return true;
 }
 
-void windmillPulseHigh(){
-  analogWrite(WINDMILL, wm.currentSpeed * 1023 / 100);
+void windmillPulseHigh(unsigned int speed){
+  analogWrite(WINDMILL, speed * 1023 / 100);
 }
 
 void windmillPulseLow(){

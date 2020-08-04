@@ -64,7 +64,7 @@ void runEntertainment();
 void nemoDetect();
 bool consumeTrigger();
 
-void windmillPulseHigh();
+void windmillPulseHigh(unsigned int speed);
 void windmillPulseLow();
 void setWindmillWithPot();
 
