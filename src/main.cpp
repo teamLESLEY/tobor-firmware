@@ -53,8 +53,6 @@ void setup(){
   pinMode(NEMO, INPUT_PULLUP);
   attachInterrupt(NEMO, nemoDetect, FALLING);
 
-  setupWindmill(wm);
-
   // if servo is connected to same power supply as BP, do not run this block
   //binServo.attach(BIN_SERVO);
   //binServo.write(BIN_MIN);
@@ -134,7 +132,7 @@ void printSensorReadings(){
 
 void setWindmillWithPot(){
   startWindmill(wm);
-  int percentage = analogRead(DEBUG_POT) * 100 / 1023;
+  unsigned int percentage = analogRead(DEBUG_POT) * 100 / 1023;
   while(!digitalRead(CONFIRM) && !digitalRead(CYCLE)){
     percentage = analogRead(DEBUG_POT) * 100 / 1023;
     sprintf(buffer,
@@ -145,7 +143,6 @@ void setWindmillWithPot(){
   }
   if(digitalRead(CYCLE)){
     stopWindmill(wm);
-    wm.speed = 0;
   } else if (digitalRead(CONFIRM)) {
     saveValues();
   }

@@ -1,6 +1,6 @@
 #include "windmill.hpp"
 
-void setupWindmill(Windmill& wm) {
+void startWindmill(Windmill& wm) {
   pinMode(wm.outputPin, OUTPUT);
   uint32_t channel = STM_PIN_CHANNEL(
     pinmap_function(digitalPinToPinName(wm.timerPin), PinMap_PWM)
@@ -22,13 +22,6 @@ void setupWindmill(Windmill& wm) {
   );
   // sets period of timer (rather than freq, to allow for periods of > 1 sec)
   wm.timer.setOverflow(1000 * wm.period, MICROSEC_FORMAT);
-  stopWindmill(wm);
-}
-
-void startWindmill(Windmill& wm) {
-  uint32_t channel = STM_PIN_CHANNEL(
-    pinmap_function(digitalPinToPinName(wm.timerPin), PinMap_PWM)
-  );
   wm.timer.resumeChannel(channel);
 }
 

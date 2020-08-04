@@ -4,7 +4,7 @@
 #include <Arduino.h>
 
 struct Windmill {
-  int speed;
+  unsigned int speed;
   int period; // milliseconds
   int dutycycle;
   uint32_t outputPin;
@@ -12,7 +12,6 @@ struct Windmill {
   HardwareTimer timer;
 };
 
-void setupWindmill(Windmill& wm);
 void startWindmill(Windmill& wm);
 void stopWindmill(Windmill& wm);
 void windmillPulseHigh(uint32_t pin, unsigned int speed);
