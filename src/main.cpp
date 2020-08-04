@@ -131,7 +131,7 @@ void printSensorReadings(){
 
 
 void setWindmillWithPot(){
-  startWindmill(wm);
+  wm.start();
   unsigned int speed = analogRead(DEBUG_POT);
   while(!digitalRead(CONFIRM) && !digitalRead(CYCLE)){
     speed = analogRead(DEBUG_POT);
@@ -141,10 +141,10 @@ void setWindmillWithPot(){
       speed
     );
     printToDisplay(buffer);
-    wm.speed = speed;
+    wm.setSpeed(speed);
   }
   if(digitalRead(CYCLE)){
-    stopWindmill(wm);
+    wm.stop();
   } else if (digitalRead(CONFIRM)) {
     saveValues();
   }

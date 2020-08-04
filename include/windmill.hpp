@@ -3,18 +3,22 @@
 
 #include <Arduino.h>
 
-struct Windmill {
+class Windmill {
+  void on();
+  void off();
+
+public:
   unsigned int speed;
   int period; // milliseconds
   int dutycycle;
   uint32_t outputPin;
   uint32_t timerPin;
   HardwareTimer timer;
-};
 
-void startWindmill(Windmill& wm);
-void stopWindmill(Windmill& wm);
-void windmillOn(uint32_t pin, unsigned int speed);
-void windmillOff(uint32_t pin);
+  void start();
+  void stop();
+
+  void setSpeed(unsigned int speed);
+};
 
 #endif
