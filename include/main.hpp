@@ -27,28 +27,9 @@ Motor::DCMotor motorL(MOTOR_L_FORWARD, MOTOR_L_REVERSE, MIN_PWM_LEFT);
 Motor::DCMotor motorR(MOTOR_R_FORWARD, MOTOR_R_REVERSE, MIN_PWM_RIGHT);
 Motor::Navigator navi(motorL, motorR, tape);
 
-Servo binServo; 
-
-HardwareTimer windmillTimer(TIM1);
+Servo binServo;
 
 char buffer [147];
-struct Windmill {
-  int currentSpeed;
-  int targetSpeed;
-  int period; // milliseconds
-  int dutycycle;
-  int timerPin;
-  HardwareTimer timer;
-};
-
-Windmill wm{
-  0,
-  WINDMILL_SPEED, 
-  WINDMILL_PULSE_PERIOD, 
-  WINDMILL_PULSE_DUTYCYCLE, 
-  WINDMILL_TIMER_PIN, 
-  HardwareTimer(TIM1)
-};
 
 bool nemoTriggered = false;
 
@@ -64,8 +45,7 @@ void runEntertainment();
 void nemoDetect();
 bool consumeTrigger();
 
-void windmillPulseHigh(unsigned int speed);
-void windmillPulseLow();
+
 void setWindmillWithPot();
 
 void lowerBin();

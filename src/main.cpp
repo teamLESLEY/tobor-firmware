@@ -1,5 +1,14 @@
 #include "main.hpp"
+#include "windmill.hpp"
 
+Windmill wm{
+  0,
+  WINDMILL_SPEED,
+  WINDMILL_PULSE_PERIOD,
+  WINDMILL_PULSE_DUTYCYCLE,
+  WINDMILL_TIMER_PIN,
+  HardwareTimer(TIM1)
+};
 
 void runCompetition(){
   printToDisplay("Running Competition\n:)");
@@ -50,8 +59,14 @@ void setup(){
     pinmap_function(digitalPinToPinName(WINDMILL_TIMER_PIN), PinMap_PWM));
   pwm_start(digitalPinToPinName(WINDMILL), 256, wm.currentSpeed, RESOLUTION_10B_COMPARE_FORMAT);
   wm.timer.pause();
-  wm.timer.setPWM(channel, WINDMILL_TIMER_PIN, 1, wm.dutycycle,
-                  windmillPulseLow, [&]() -> void {windmillPulseHigh(wm.currentSpeed);});
+  wm.timer.setPWM(
+    channel,
+    WINDMILL_TIMER_PIN,
+    1,
+    wm.dutycycle,
+    []() -> void {windmillPulseLow(WINDMILL);},
+    [&]() -> void {windmillPulseHigh(WINDMILL, wm.currentSpeed);}
+  );
   // sets period of timer (rather than freq, to allow for periods of > 1 sec)
   wm.timer.setOverflow(1000 * wm.period, MICROSEC_FORMAT);
   wm.timer.resumeChannel(channel);
@@ -65,7 +80,7 @@ void setup(){
 void loop() {
   unsigned int choice = getMenuSelection(mainMenu);
   mainMenu.callbacks[choice]();
-  
+
   printToDisplay("Returning to \nMain Menu");
   delay(MENU_WAIT_TIME);
 }
@@ -122,17 +137,9 @@ bool consumeTrigger(){
   return true;
 }
 
-void windmillPulseHigh(unsigned int speed){
-  analogWrite(WINDMILL, speed * 1023 / 100);
-}
-
-void windmillPulseLow(){
-  analogWrite(WINDMILL, 0);
-}
-
 void printSensorReadings(){
   while(!digitalRead(CONFIRM)){
-    sprintf(buffer, 
+    sprintf(buffer,
       "Tape L: %d\nTape R: %d\n\nNemo: %d",
       tape.getLeftReading(),
       tape.getRightReading(),
@@ -146,7 +153,7 @@ void setWindmillWithPot(){
   int percentage = analogRead(DEBUG_POT) * 100 / 1023;
   while(!digitalRead(CONFIRM) && !digitalRead(CYCLE)){
     percentage = analogRead(DEBUG_POT) * 100 / 1023;
-    sprintf(buffer, 
+    sprintf(buffer,
       "Windmill power: %d%%\n\nUP to save\nDOWN to stop",
       percentage);
     printToDisplay(buffer);
@@ -173,7 +180,7 @@ void straightUntilNemo(){
   consumeTrigger(); // reset nemo
   double kd = 0;
   double kp = 0;
-  double gain = 0.5;  
+  double gain = 0.5;
   while(!digitalRead(CONFIRM) && !consumeTrigger()){
     kp = analogRead(DEBUG_POT) * gain / 5000.0;
     sprintf(buffer, "kp: %.4f", kp);
@@ -195,7 +202,7 @@ unsigned int getMenuSelection(Menu menu){
       delay(CYCLE_WAIT_TIME);
     }
   }
-  // for unknown reasons, menu fails in second iteration unless this is included. 
+  // for unknown reasons, menu fails in second iteration unless this is included.
   printToDisplay("Loading...");
   delay(MENU_WAIT_TIME);
   return menu.select();
@@ -210,8 +217,8 @@ void subroutineMenu(){
 void raiseBinOnDetect(){
   while(!digitalRead(BIN_DETECT_L) || !digitalRead(BIN_DETECT_R)){
     sprintf(buffer,
-      "Left: %d\nRight: %d", 
-      digitalRead(BIN_DETECT_L), 
+      "Left: %d\nRight: %d",
+      digitalRead(BIN_DETECT_L),
       digitalRead(BIN_DETECT_R));
     printToDisplay(buffer);
     motorL.setSpeed(- MOTOR_BASE_SPEED * (!digitalRead(BIN_DETECT_L)));
@@ -240,7 +247,7 @@ void emptyFunc(){
 }
 
 void saveValues(){
-  
+
   // drive
   // kp
   // kd
@@ -256,7 +263,7 @@ void saveValues(){
   // speed
   // period
   // duty cycle
-  
+
   // bin
   // min
   // max
@@ -278,7 +285,7 @@ void loadValues(){
   // speed
   // period
   // duty cycle
-  
+
   // bin
   // min
   // max
