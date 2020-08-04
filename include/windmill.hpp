@@ -14,7 +14,7 @@ struct Windmill {
 
 void startWindmill(Windmill& wm);
 void stopWindmill(Windmill& wm);
-void windmillPulseHigh(uint32_t pin, unsigned int speed);
-void windmillPulseLow(uint32_t pin);
+void windmillOn(uint32_t pin, unsigned int speed);
+void windmillOff(uint32_t pin);
 
 #endif

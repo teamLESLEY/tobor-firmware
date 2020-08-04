@@ -17,8 +17,8 @@ void startWindmill(Windmill& wm) {
     wm.timerPin,
     1,
     wm.dutycycle,
-    [&]() -> void {windmillPulseLow(wm.outputPin);},
-    [&]() -> void {windmillPulseHigh(wm.outputPin, wm.speed);}
+    [&]() -> void {windmillOn(wm.outputPin, wm.speed);},
+    [&]() -> void {windmillOff(wm.outputPin);}
   );
   // sets period of timer (rather than freq, to allow for periods of > 1 sec)
   wm.timer.setOverflow(1000 * wm.period, MICROSEC_FORMAT);
@@ -27,13 +27,13 @@ void startWindmill(Windmill& wm) {
 
 void stopWindmill(Windmill& wm) {
   wm.timer.pause();
-  windmillPulseLow(wm.outputPin);
+  windmillOff(wm.outputPin);
 }
 
-void windmillPulseHigh(uint32_t pin, unsigned int speed){
+void windmillOn(uint32_t pin, unsigned int speed){
   analogWrite(pin, speed * 1023 / 100);
 }
 
-void windmillPulseLow(uint32_t pin) {
+void windmillOff(uint32_t pin) {
   analogWrite(pin, 0);
 }
