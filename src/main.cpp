@@ -132,14 +132,16 @@ void printSensorReadings(){
 
 void setWindmillWithPot(){
   startWindmill(wm);
-  unsigned int percentage = analogRead(DEBUG_POT) * 100 / 1023;
+  unsigned int speed = analogRead(DEBUG_POT);
   while(!digitalRead(CONFIRM) && !digitalRead(CYCLE)){
-    percentage = analogRead(DEBUG_POT) * 100 / 1023;
-    sprintf(buffer,
-      "Windmill power: %d%%\n\nUP to save\nDOWN to stop",
-      percentage);
+    speed = analogRead(DEBUG_POT);
+    sprintf(
+      buffer,
+      "Windmill power: %d\n\nUP to save\nDOWN to stop",
+      speed
+    );
     printToDisplay(buffer);
-    wm.speed = percentage;
+    wm.speed = speed;
   }
   if(digitalRead(CYCLE)){
     stopWindmill(wm);

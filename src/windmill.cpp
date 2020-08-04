@@ -7,7 +7,7 @@ void startWindmill(Windmill& wm) {
   );
   pwm_start(
     digitalPinToPinName(wm.outputPin),
-    256,
+    200,
     wm.speed,
     RESOLUTION_10B_COMPARE_FORMAT
   );
@@ -31,9 +31,19 @@ void stopWindmill(Windmill& wm) {
 }
 
 void windmillOn(uint32_t pin, unsigned int speed){
-  analogWrite(pin, speed * 1023 / 100);
+  pwm_start(
+    digitalPinToPinName(pin),
+    200,
+    speed,
+    RESOLUTION_10B_COMPARE_FORMAT
+  );
 }
 
 void windmillOff(uint32_t pin) {
-  analogWrite(pin, 0);
+  pwm_start(
+    digitalPinToPinName(pin),
+    200,
+    0,
+    RESOLUTION_10B_COMPARE_FORMAT
+  );
 }
