@@ -4,8 +4,7 @@
 #include <Arduino.h>
 
 struct Windmill {
-  int currentSpeed;
-  int targetSpeed;
+  int speed;
   int period; // milliseconds
   int dutycycle;
   uint32_t outputPin;
@@ -14,6 +13,8 @@ struct Windmill {
 };
 
 void setupWindmill(Windmill& wm);
+void startWindmill(Windmill& wm);
+void stopWindmill(Windmill& wm);
 void windmillPulseHigh(uint32_t pin, unsigned int speed);
 void windmillPulseLow(uint32_t pin);
 

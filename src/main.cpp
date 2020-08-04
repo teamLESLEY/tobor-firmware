@@ -2,7 +2,6 @@
 #include "windmill.hpp"
 
 Windmill wm{
-  0,
   WINDMILL_SPEED,
   WINDMILL_PULSE_PERIOD,
   WINDMILL_PULSE_DUTYCYCLE,
@@ -15,7 +14,7 @@ void runCompetition(){
   printToDisplay("Running Competition\n:)");
   delay(3000);
   /*
-  wm.currentSpeed = wm.targetSpeed;
+  wm.speed = wm.targetSpeed;
   straightUntilNemo();
   rightUntilNemo();
   straightUntilNemo();
@@ -26,7 +25,7 @@ void runCompetition(){
   rightUntilNemo();
   straightUntilNemo();
   pivotUntilNemo();
-  wm.currentSpeed = 0;
+  wm.speed = 0;
   raiseBinOnDetect();*/
 }
 
@@ -134,6 +133,7 @@ void printSensorReadings(){
 
 
 void setWindmillWithPot(){
+  startWindmill(wm);
   int percentage = analogRead(DEBUG_POT) * 100 / 1023;
   while(!digitalRead(CONFIRM) && !digitalRead(CYCLE)){
     percentage = analogRead(DEBUG_POT) * 100 / 1023;
@@ -141,12 +141,12 @@ void setWindmillWithPot(){
       "Windmill power: %d%%\n\nUP to save\nDOWN to stop",
       percentage);
     printToDisplay(buffer);
-    wm.currentSpeed = percentage;
+    wm.speed = percentage;
   }
   if(digitalRead(CYCLE)){
-    wm.currentSpeed = 0;
-  } else if(digitalRead(CONFIRM)){
-    wm.targetSpeed = percentage;
+    stopWindmill(wm);
+    wm.speed = 0;
+  } else if (digitalRead(CONFIRM)) {
     saveValues();
   }
 }
