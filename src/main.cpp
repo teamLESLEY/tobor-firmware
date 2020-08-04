@@ -1,7 +1,17 @@
 #include "main.hpp"
+#include "windmill.hpp"
 
 int debugToneNum = 0;
 bool debugging = false;
+
+Windmill wm{
+  WINDMILL_SPEED,
+  WINDMILL_PULSE_PERIOD,
+  WINDMILL_PULSE_DUTYCYCLE,
+  WINDMILL,
+  WINDMILL_TIMER_PIN,
+  HardwareTimer(TIM1)
+};
 
 void debugTone(){
   if(debugToneNum % 12 != 4 && debugToneNum % 12 != 11){
@@ -13,10 +23,10 @@ void debugTone(){
 }
 
 void finisher(){
-  
+
   tiltBin();
-  windmill.stop();
-  
+  wm.stop();
+
   // pivot (absorb 3 tape passes, waiting 100 ms afer each pass)
   for(int i = 0; i < 3; i++){
     navi.driveUntilDory(MOTOR_BASE_SPEED, -MOTOR_BASE_SPEED, 200);
@@ -86,7 +96,7 @@ void leftSwitchback(){
   navi.tapeFollowUntilNemo(MOTOR_BASE_SPEED, MOTOR_BASE_SPEED, kp, kd);
 
     // exit surface and begin turn
-  navi.driveUntilDory(L_TURN_L_MOTOR_SPEED, L_TURN_R_MOTOR_SPEED, 500); 
+  navi.driveUntilDory(L_TURN_L_MOTOR_SPEED, L_TURN_R_MOTOR_SPEED, 500);
   // detect when Dory hits surface edge, and continue turn
   navi.driveUntilDory(L_TURN_L_MOTOR_SPEED, L_TURN_R_MOTOR_SPEED, 400);
 
@@ -145,14 +155,10 @@ void setup(){
   pinMode(DEBUG_DOWN, INPUT_PULLUP);
   pinMode(DEBUG_POT, INPUT);
 
-  // Windmill Setup
-  windmill.setup();
-
   // if servo is connected to same power supply as BP, do not run this block
   //binServo.attach(BIN_SERVO);
   //binServo.write(BIN_MIN);
 }
-
 
 void loop() {
   getMenuSelection(mainMenu);
@@ -202,19 +208,21 @@ void printSensorReadings(){
 
 
 void setWindmillWithPot(){
-  int speed = analogRead(DEBUG_POT);
+  wm.start();
+  unsigned int speed = analogRead(DEBUG_POT);
   while(!digitalRead(CONFIRM) && !digitalRead(CYCLE)){
     speed = analogRead(DEBUG_POT);
-    sprintf(buffer,
+    sprintf(
+      buffer,
       "Windmill power: %d\n\nUP to save\nDOWN to stop",
-      speed);
+      speed
+    );
     printToDisplay(buffer);
-    windmill.currentSpeed = speed;
+    wm.setSpeed(speed);
   }
   if(digitalRead(CYCLE)){
-    windmill.currentSpeed = 0;
-  } else if(digitalRead(CONFIRM)){
-    windmill.setSpeed(speed);
+    wm.stop();
+  } else if (digitalRead(CONFIRM)) {
     saveValues();
   }
 }
@@ -268,8 +276,10 @@ void getMenuSelection(Menu menu) {
       delay(CYCLE_WAIT_TIME);
     }
   }
-
   while (digitalRead(CONFIRM)); // Wait until CONFIRM is released
+  // for unknown reasons, menu fails in second iteration unless this is included.
+  printToDisplay("Loading...");
+  delay(MENU_WAIT_TIME);
   menu.select();
 }
 
@@ -332,5 +342,6 @@ void saveValues(){
   // max
 }
 
-void loadValues(){
+void loadValues() {
+
 }

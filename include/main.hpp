@@ -9,7 +9,6 @@
 #include "navigation.hpp"
 #include "config.h"
 #include "menu.hpp"
-#include "windmill.hpp"
 
 #define CONFIRM DEBUG_UP
 #define CYCLE DEBUG_DOWN
@@ -26,7 +25,7 @@ Motor::DCMotor motorL(MOTOR_L_FORWARD, MOTOR_L_REVERSE, MIN_PWM_LEFT);
 Motor::DCMotor motorR(MOTOR_R_FORWARD, MOTOR_R_REVERSE, MIN_PWM_RIGHT);
 Motor::Navigator navi(motorL, motorR, tape, NEMO);
 
-Servo binServo; 
+Servo binServo;
 
 double kp;
 double kd;
