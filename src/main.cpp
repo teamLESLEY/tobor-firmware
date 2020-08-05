@@ -49,12 +49,20 @@ void straight(){
 }
 
 void perimeter(){
+
+  // side 1
   straight();
   rightTurn();
+
+  // side 2
+  straight();
   straight();
   rightTurn();
+
+  // side 3
   straight();
   rightTurn();
+  
   straight();
 }
 
@@ -68,44 +76,28 @@ void waitForConfirm(){
 }
 
 void rightSwitchback(){
-  //printToDisplay("Stage 0");
-  //navi.tapeFollowUntilNemo(MOTOR_BASE_SPEED, MOTOR_BASE_SPEED, kp, kd);
-  printToDisplay("Stage 1");
-  navi.tapeFollowUntilNemo(MOTOR_BASE_SPEED, MOTOR_BASE_SPEED, kp, kd);
-  waitForConfirm();
-  // (2) ignore second nemo and continue as before
-  //navi.tapeFollowUntilNemo(MOTOR_BASE_SPEED/2, MOTOR_BASE_SPEED/2, kp, kd);
-  printToDisplay("Stage 2");
+  // (2) ignore first nemo and continue straight off-tape
+  navi.driveUntilNemo(MOTOR_BASE_SPEED, MOTOR_BASE_SPEED);
   // (3) start turn when hitting surface boundary
   navi.driveUntilNemo(R_TURN_L_MOTOR_SPEED, R_TURN_R_MOTOR_SPEED);
-  waitForConfirm();
-  printToDisplay("Stage 3");
   // (4) continue turning after reentering surface
   navi.driveUntilNemo(R_TURN_L_MOTOR_SPEED, R_TURN_R_MOTOR_SPEED);
-  waitForConfirm();
-  printToDisplay("Stage 4");
   // (4) hits nemo and signals turn is ending soon; enter recovery
-  navi.driveUntilDory(MOTOR_BASE_SPEED, MOTOR_BASE_SPEED/3);
-  printToDisplay("Stage 5");
+  navi.driveUntilDory(MOTOR_BASE_SPEED, MOTOR_BASE_SPEED/2);
   // (5) dory reaches tape and begins normal tape following
 }
 
 void leftSwitchback(){
-
   // skip first nemo and continue straight
   navi.tapeFollowUntilNemo(MOTOR_BASE_SPEED, MOTOR_BASE_SPEED, kp, kd);
-
     // exit surface and begin turn
   navi.driveUntilDory(L_TURN_L_MOTOR_SPEED, L_TURN_R_MOTOR_SPEED, 500);
   // detect when Dory hits surface edge, and continue turn
   navi.driveUntilDory(L_TURN_L_MOTOR_SPEED, L_TURN_R_MOTOR_SPEED, 400);
-
   // dory passes perpendicular path
   navi.driveUntilNemo(L_TURN_L_MOTOR_SPEED, L_TURN_R_MOTOR_SPEED);
-
   // after hitting nemo flag, enter recovery
   navi.driveUntilDory(MOTOR_BASE_SPEED/3, MOTOR_BASE_SPEED, 50);
-
   //with luck, is now on tape
 }
 
@@ -115,10 +107,10 @@ void competition(){
   straight();
   rightSwitchback();
   straight();
-  /*leftSwitchback();
+  leftSwitchback();
   straight();
   rightSwitchback();
-  straight();*/
+  straight();
 }
 
 void debugCompetition(){
