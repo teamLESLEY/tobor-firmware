@@ -3,13 +3,11 @@
 
 #include "motor.hpp"
 #include "tape.hpp"
+#include "config.h"
 
 enum TapeSide {LEFT, RIGHT};
 namespace Motor {
     class Navigator {
-        const int ERROR_ONE_OFF = 2;
-        const int ERROR_BOTH_OFF = 10;
-
         DCMotor motorL;
         DCMotor motorR;
         TapeSensor tapeSensor;
