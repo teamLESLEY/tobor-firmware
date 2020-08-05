@@ -76,6 +76,11 @@ void innerSquare(){
 
   // side 1
   straight();
+  straight();
+
+  // side 2
+  rightTurn(1);
+  straight();
 }
 
 void waitForConfirm(){
