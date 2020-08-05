@@ -33,9 +33,6 @@ double kd;
 using std::vector;
 using std::string;
 
-void saveValues();
-void loadValues();
-
 void debugCompetition();
 void runCompetition();
 void runEntertainment();
@@ -64,7 +61,6 @@ void setup();
 void loop();
 void subroutineMenu();
 void getMenuSelection(Menu menu);
-void emptyFunc();
 void printToDisplay(const char *str);
 
 void printSensorReadings();
@@ -79,7 +75,6 @@ Menu mainMenu(
     {"Run Competition", runCompetition},
     {"Debug Competition", debugCompetition},
     {"Entertainment", runEntertainment},
-    {"Set Values", emptyFunc},
     {"Run Subroutines", subroutineMenu},
   }
 );
@@ -102,7 +97,7 @@ Menu subMenu(
     {"Lower bin", lowerBin},
     {"Show sensor readings", printSensorReadings},
     {"Run motors fwd/back", hBridgeTest},
-    {"Back", emptyFunc},
+    {"Back", []() -> void {}},
   }
 );
 

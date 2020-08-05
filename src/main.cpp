@@ -43,7 +43,7 @@ void raiseBin() {
 }
 
 void rightTurn(int skipped){
-  navi.drive(-0.8, -0.8, 200);
+  navi.drive(-0.8, -0.8, HARD_STOP_TIME);
   for(int i = 0; i < skipped + 1; i++){
     navi.driveUntilNemo(R_TURN_L_MOTOR_SPEED, R_TURN_R_MOTOR_SPEED);
   }
@@ -198,10 +198,8 @@ void setWindmillWithPot(){
     printToDisplay(buffer);
     wm.setSpeed(speed);
   }
-  if(digitalRead(CYCLE)){
+  if (digitalRead(CYCLE)) {
     wm.stop();
-  } else if (digitalRead(CONFIRM)) {
-    saveValues();
   }
 }
 
@@ -212,13 +210,6 @@ void setBinWithPot(){
     printToDisplay(buffer);
     bin.setAngle(angle);
   }
-}
-
-void setLeftMotorWithPot(){
-}
-
-void setRightMotorWithPot(){
-
 }
 
 void straightUntilNemo(int startSide){
@@ -295,36 +286,6 @@ void printToDisplay(const char *str) {
     display.setCursor(0,0);
     display.print(str);
     display.display();
-}
-
-void emptyFunc(){
-}
-
-void saveValues(){
-
-  // drive
-  // kp
-  // kd
-  // gain
-  // base speed left (straight)
-  // base speed right (straight)
-  // base speed left (l turn)
-  // base speed right (l turn)
-  // base speed left (r turn)
-  // base speed right (r turn)
-
-  // windmill
-  // speed
-  // period
-  // duty cycle
-
-  // bin
-  // min
-  // max
-}
-
-void loadValues() {
-
 }
 
 void finalTurn() {
