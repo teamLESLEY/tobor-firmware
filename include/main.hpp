@@ -53,6 +53,7 @@ void rightUntilNemo();
 void pivotUntilNemo();
 void leftSwitchback();
 void rightSwitchback();
+void perimeter();
 void straightUntilNemoOnRight();
 void straightUntilNemo(int startSide);
 
@@ -90,6 +91,7 @@ Menu subMenu(
     {"Pivot until Nemo", pivotUntilNemo},
     {"Right switchback", rightSwitchback},
     {"Left switchback", leftSwitchback},
+    {"Sweep perimeter", perimeter},
     {"Set windmill with pot", setWindmillWithPot},
     {"Set bin with pot", setBinWithPot},
     {"Bin raise on detect", raiseBinOnDetect},
