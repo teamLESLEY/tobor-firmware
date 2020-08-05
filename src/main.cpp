@@ -43,7 +43,7 @@ void raiseBin() {
 }
 
 void rightTurn(int skipped){
-  navi.drive(-0.8, -0.8, 200);
+  navi.drive(-0.8, -0.8, HARD_STOP_TIME);
   for(int i = 0; i < skipped + 1; i++){
     navi.driveUntilNemo(R_TURN_L_MOTOR_SPEED, R_TURN_R_MOTOR_SPEED);
   }
