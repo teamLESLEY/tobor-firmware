@@ -13,6 +13,10 @@ Windmill wm{
   HardwareTimer(TIM1)
 };
 
+void backspin(){
+  navi.drive(-0.8, -0.8, HARD_STOP_TIME);
+}
+
 void debugTone(){
   if(debugToneNum % 12 != 4 && debugToneNum % 12 != 11){
     debugToneNum++;
@@ -43,7 +47,7 @@ void raiseBin() {
 }
 
 void rightTurn(int skipped){
-  navi.drive(-0.8, -0.8, HARD_STOP_TIME);
+  backspin();
   for(int i = 0; i < skipped + 1; i++){
     navi.driveUntilNemo(R_TURN_L_MOTOR_SPEED, R_TURN_R_MOTOR_SPEED);
   }
@@ -58,6 +62,7 @@ void straight(){
 void perimeter(){
 
   // side 1
+  straight();
   straight();
   rightTurn();
 
@@ -89,9 +94,28 @@ void innerSquare(){
   // side 3
   straight();
   rightTurn(2);
+}
 
-  // side 4
+void returnPath(){
+  // finish side 4 of inner square
   straight();
+
+  // skip first 2 nemo flags
+  for(int i = 0; i < 3; i++){
+    navi.tapeFollowUntilNemo(MOTOR_BASE_SPEED, 0, kp, kd);
+  }
+  // lock onto and finish side 1
+  straight();
+  rightTurn();
+
+  // side 2 (first half)
+  straight();
+  rightTurn(1);
+
+  // middle cutback
+  straight(); // entering inner square
+  straight(); // exiting inner square
+  straight(); // exiting outer square
 }
 
 void waitForConfirm(){
@@ -105,6 +129,10 @@ void waitForConfirm(){
 void competition(){
   delay(200);
 
+  perimeter();
+  innerSquare();
+  returnPath();
+  
 }
 
 void debugCompetition(){
