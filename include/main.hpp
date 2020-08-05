@@ -55,7 +55,7 @@ void rightUntilNemo();
 void pivotUntilNemo();
 void perimeter();
 void innerSquare();
-void reverseInLane();
+void returnPath();
 void straightUntilNemoOnRight();
 void straightUntilNemo(int startSide);
 
@@ -93,6 +93,7 @@ Menu subMenu(
     {"Pivot until Nemo", pivotUntilNemo},
     {"Sweep perimeter", perimeter},
     {"Sweep inner square", innerSquare},
+    {"Return path", returnPath},
     {"Set windmill with pot", setWindmillWithPot},
     {"Set bin with pot", setBinWithPot},
     {"Bin raise on detect", raiseBinOnDetect},
