@@ -260,6 +260,7 @@ void straightUntilNemo(int startSide){
     delay(5);
   }
   navi.tapeFollowUntilNemo(MOTOR_BASE_SPEED, MOTOR_BASE_SPEED, kprop, kderiv,startSide);
+  backspin();
 }
 
 void straightUntilNemoOnRight(){
