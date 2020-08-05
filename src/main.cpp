@@ -80,9 +80,17 @@ void innerSquare(){
   // side 1
   straight();
   straight();
+  rightTurn(2);   // skips when crossing and reentering outer square
 
   // side 2
-  rightTurn(1);
+  straight();
+  rightTurn(2);
+
+  // side 3
+  straight();
+  rightTurn(2);
+
+  // side 4
   straight();
 }
 
