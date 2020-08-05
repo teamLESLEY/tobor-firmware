@@ -198,10 +198,8 @@ void setWindmillWithPot(){
     printToDisplay(buffer);
     wm.setSpeed(speed);
   }
-  if(digitalRead(CYCLE)){
+  if (digitalRead(CYCLE)) {
     wm.stop();
-  } else if (digitalRead(CONFIRM)) {
-    saveValues();
   }
 }
 
@@ -212,13 +210,6 @@ void setBinWithPot(){
     printToDisplay(buffer);
     bin.setAngle(angle);
   }
-}
-
-void setLeftMotorWithPot(){
-}
-
-void setRightMotorWithPot(){
-
 }
 
 void straightUntilNemo(int startSide){
@@ -295,34 +286,4 @@ void printToDisplay(const char *str) {
     display.setCursor(0,0);
     display.print(str);
     display.display();
-}
-
-void emptyFunc(){
-}
-
-void saveValues(){
-
-  // drive
-  // kp
-  // kd
-  // gain
-  // base speed left (straight)
-  // base speed right (straight)
-  // base speed left (l turn)
-  // base speed right (l turn)
-  // base speed left (r turn)
-  // base speed right (r turn)
-
-  // windmill
-  // speed
-  // period
-  // duty cycle
-
-  // bin
-  // min
-  // max
-}
-
-void loadValues() {
-
 }
