@@ -9,6 +9,7 @@
 #include "navigation.hpp"
 #include "config.h"
 #include "menu.hpp"
+#include "bin.hpp"
 
 #define CONFIRM DEBUG_UP
 #define CYCLE DEBUG_DOWN
@@ -24,8 +25,7 @@ TapeSensor tape(TAPE_L, TAPE_R, THRESHOLD);
 Motor::DCMotor motorL(MOTOR_L_FORWARD, MOTOR_L_REVERSE, MIN_PWM_LEFT);
 Motor::DCMotor motorR(MOTOR_R_FORWARD, MOTOR_R_REVERSE, MIN_PWM_RIGHT);
 Motor::Navigator navi(motorL, motorR, tape, NEMO);
-
-Servo binServo;
+Bin bin(BIN_SERVO, BIN_DETECT_L, BIN_DETECT_R, BIN_DETECT_ACTIVE);
 
 double kp;
 double kd;

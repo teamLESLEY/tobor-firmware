@@ -23,7 +23,6 @@ void debugTone(){
 }
 
 void finisher(){
-
   tiltBin();
   wm.stop();
 
@@ -36,7 +35,11 @@ void finisher(){
   delay(300);
   raiseBin();
   delay(5000);
-  binServo.detach();
+  // binServo.detach();
+}
+
+void raiseBin() {
+  bin.setAngle(BIN_MAX);
 }
 
 void rightTurn(){
@@ -148,8 +151,6 @@ void setup(){
   pinMode(DEBUG_POT, INPUT);
 
   // if servo is connected to same power supply as BP, do not run this block
-  //binServo.attach(BIN_SERVO);
-  //binServo.write(BIN_MIN);
 }
 
 void loop() {
@@ -161,17 +162,11 @@ void loop() {
 
 
 void lowerBin(){
-  binServo.write(BIN_MIN);
+  bin.setAngle(BIN_MIN);
 }
 
 void tiltBin(){
-  binServo.attach(BIN_SERVO);
-  binServo.write((BIN_MAX + 2 * BIN_MIN) / 3);
-}
-
-void raiseBin(){
-  binServo.attach(BIN_SERVO);
-  binServo.write(BIN_MAX);
+  bin.setAngle((BIN_MAX + 2 * BIN_MIN) / 3);
 }
 
 void leftUntilNemo(){
@@ -220,12 +215,11 @@ void setWindmillWithPot(){
 }
 
 void setBinWithPot(){
-  binServo.attach(BIN_SERVO);
   while(!digitalRead(CONFIRM)){
     int angle = (int)analogRead(DEBUG_POT) * 180 / 1023;
     sprintf(buffer, "Bin angle: %d", angle);
     printToDisplay(buffer);
-    binServo.write(angle);
+    bin.setAngle(angle);
   }
 }
 
@@ -285,14 +279,15 @@ void subroutineMenu() {
 }
 
 void raiseBinOnDetect(){
-  while(!digitalRead(BIN_DETECT_L) || !digitalRead(BIN_DETECT_R)){
+  while( ! (bin.onLeft() && bin.onRight()) ) {
     sprintf(buffer,
       "Left: %d\nRight: %d",
       digitalRead(BIN_DETECT_L),
       digitalRead(BIN_DETECT_R));
     printToDisplay(buffer);
-    motorL.setSpeed(- MOTOR_BASE_SPEED * (!digitalRead(BIN_DETECT_L)));
-    motorR.setSpeed(- MOTOR_BASE_SPEED * (!digitalRead(BIN_DETECT_R)));
+
+    motorL.setSpeed(- MOTOR_BASE_SPEED * (!bin.onLeft()));
+    motorR.setSpeed(- MOTOR_BASE_SPEED * (!bin.onRight()));
   }
   navi.stop();
   delay(200);
