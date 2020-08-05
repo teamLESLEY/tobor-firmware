@@ -97,13 +97,6 @@ void waitForConfirm(){
 void competition(){
   delay(200);
 
-  straight();
-  rightSwitchback();
-  straight();
-  leftSwitchback();
-  straight();
-  rightSwitchback();
-  straight();
 }
 
 void debugCompetition(){
