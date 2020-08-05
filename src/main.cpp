@@ -315,3 +315,8 @@ void printToDisplay(const char *str) {
     display.print(str);
     display.display();
 }
+
+void finalTurn() {
+  navi.driveUntilNemo(-PIVOT_SPEED, PIVOT_SPEED, 0);
+  navi.drive(PIVOT_CORRECTION_SPEED, -PIVOT_CORRECTION_SPEED, PIVOT_CORRECTION_DURATION);
+}

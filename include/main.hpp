@@ -55,6 +55,7 @@ void innerSquare();
 void returnPath();
 void straightUntilNemoOnRight();
 void straightUntilNemo(int startSide);
+void finalTurn();
 
 void setup();
 void loop();
@@ -89,6 +90,7 @@ Menu subMenu(
     {"Sweep perimeter", perimeter},
     {"Sweep inner square", innerSquare},
     {"Return path", returnPath},
+    {"Final turn", finalTurn},
     {"Set windmill with pot", setWindmillWithPot},
     {"Set bin with pot", setBinWithPot},
     {"Bin raise on detect", raiseBinOnDetect},
