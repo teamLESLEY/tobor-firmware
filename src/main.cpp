@@ -14,7 +14,7 @@ Windmill wm{
 };
 
 void backspin(){
-  navi.drive(-0.8, -0.8, 150);
+  navi.drive(-0.8, -0.8, HARD_STOP_TIME);
 }
 
 void debugTone(){
@@ -226,10 +226,8 @@ void setWindmillWithPot(){
     printToDisplay(buffer);
     wm.setSpeed(speed);
   }
-  if(digitalRead(CYCLE)){
+  if (digitalRead(CYCLE)) {
     wm.stop();
-  } else if (digitalRead(CONFIRM)) {
-    saveValues();
   }
 }
 
@@ -240,13 +238,6 @@ void setBinWithPot(){
     printToDisplay(buffer);
     bin.setAngle(angle);
   }
-}
-
-void setLeftMotorWithPot(){
-}
-
-void setRightMotorWithPot(){
-
 }
 
 void straightUntilNemo(int startSide){
@@ -300,9 +291,7 @@ void subroutineMenu() {
 void raiseBinOnDetect(){
   while( ! (bin.onLeft() && bin.onRight()) ) {
     sprintf(buffer,
-      "Left: %d\nRight: %d",
-      digitalRead(BIN_DETECT_L),
-      digitalRead(BIN_DETECT_R));
+      "Left: %d\nRight: %d", bin.onLeft(), bin.onRight());
     printToDisplay(buffer);
 
     motorL.setSpeed(- MOTOR_BASE_SPEED * (!bin.onLeft()));
@@ -325,34 +314,4 @@ void printToDisplay(const char *str) {
     display.setCursor(0,0);
     display.print(str);
     display.display();
-}
-
-void emptyFunc(){
-}
-
-void saveValues(){
-
-  // drive
-  // kp
-  // kd
-  // gain
-  // base speed left (straight)
-  // base speed right (straight)
-  // base speed left (l turn)
-  // base speed right (l turn)
-  // base speed left (r turn)
-  // base speed right (r turn)
-
-  // windmill
-  // speed
-  // period
-  // duty cycle
-
-  // bin
-  // min
-  // max
-}
-
-void loadValues() {
-
 }
