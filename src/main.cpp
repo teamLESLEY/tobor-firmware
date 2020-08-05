@@ -39,14 +39,18 @@ void finisher(){
   binServo.detach();
 }
 
-void rightTurn(){
-  navi.driveUntilNemo(R_TURN_L_MOTOR_SPEED, R_TURN_R_MOTOR_SPEED);
+void rightTurn(int skipped){
+  navi.drive(-0.8, -0.8, 200);
+  for(int i = 0; i < skipped + 1; i++){
+    navi.driveUntilNemo(R_TURN_L_MOTOR_SPEED, R_TURN_R_MOTOR_SPEED);
+  }
   navi.driveUntilDory(MOTOR_BASE_SPEED, MOTOR_BASE_SPEED/2); // recovery
 }
 
 void straight(){
   navi.tapeFollowUntilNemo(MOTOR_BASE_SPEED, MOTOR_BASE_SPEED, kp, kd);
 }
+
 
 void perimeter(){
 
@@ -62,10 +66,17 @@ void perimeter(){
   // side 3
   straight();
   rightTurn();
-  
-  straight();
 }
 
+
+void innerSquare(){
+  // finish driving 4th side of outer square & turn onto inner square
+  straight();
+  rightTurn();
+
+  // side 1
+  straight();
+}
 
 void waitForConfirm(){
   if (debugging){
@@ -73,32 +84,6 @@ void waitForConfirm(){
     while (!digitalRead(CONFIRM))
     ;
   }
-}
-
-void rightSwitchback(){
-  // (2) ignore first nemo and continue straight off-tape
-  navi.driveUntilNemo(MOTOR_BASE_SPEED, MOTOR_BASE_SPEED);
-  // (3) start turn when hitting surface boundary
-  navi.driveUntilNemo(R_TURN_L_MOTOR_SPEED, R_TURN_R_MOTOR_SPEED);
-  // (4) continue turning after reentering surface
-  navi.driveUntilNemo(R_TURN_L_MOTOR_SPEED, R_TURN_R_MOTOR_SPEED);
-  // (4) hits nemo and signals turn is ending soon; enter recovery
-  navi.driveUntilDory(MOTOR_BASE_SPEED, MOTOR_BASE_SPEED/2);
-  // (5) dory reaches tape and begins normal tape following
-}
-
-void leftSwitchback(){
-  // skip first nemo and continue straight
-  navi.tapeFollowUntilNemo(MOTOR_BASE_SPEED, MOTOR_BASE_SPEED, kp, kd);
-    // exit surface and begin turn
-  navi.driveUntilDory(L_TURN_L_MOTOR_SPEED, L_TURN_R_MOTOR_SPEED, 500);
-  // detect when Dory hits surface edge, and continue turn
-  navi.driveUntilDory(L_TURN_L_MOTOR_SPEED, L_TURN_R_MOTOR_SPEED, 400);
-  // dory passes perpendicular path
-  navi.driveUntilNemo(L_TURN_L_MOTOR_SPEED, L_TURN_R_MOTOR_SPEED);
-  // after hitting nemo flag, enter recovery
-  navi.driveUntilDory(MOTOR_BASE_SPEED/3, MOTOR_BASE_SPEED, 50);
-  //with luck, is now on tape
 }
 
 void competition(){

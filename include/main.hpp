@@ -48,12 +48,14 @@ void tiltBin();
 void setBinWithPot();
 void raiseBinOnDetect();
 
+void rightTurn(int skipped = 0);
+void straight();
 void leftUntilNemo();
 void rightUntilNemo();
 void pivotUntilNemo();
-void leftSwitchback();
-void rightSwitchback();
 void perimeter();
+void innerSquare();
+void reverseInLane();
 void straightUntilNemoOnRight();
 void straightUntilNemo(int startSide);
 
@@ -89,9 +91,8 @@ Menu subMenu(
     {"Right until Nemo", rightUntilNemo},
     {"Left until Nemo", leftUntilNemo},
     {"Pivot until Nemo", pivotUntilNemo},
-    {"Right switchback", rightSwitchback},
-    {"Left switchback", leftSwitchback},
     {"Sweep perimeter", perimeter},
+    {"Sweep inner square", innerSquare},
     {"Set windmill with pot", setWindmillWithPot},
     {"Set bin with pot", setBinWithPot},
     {"Bin raise on detect", raiseBinOnDetect},
