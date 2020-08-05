@@ -6,7 +6,7 @@
 
 class Bin {
   Servo binServo;
-  PinName servoPin;
+  uint32_t servoPin;
   uint32_t leftSensePin;
   uint32_t rightSensePin;
   const uint8_t active;
@@ -15,7 +15,6 @@ class Bin {
   void setup(PinName servoPin);
 
   public:
-    Bin(PinName servoPin, uint32_t leftSensePin, uint32_t rightSensePin, uint8_t active);
     Bin(uint32_t servoPin, uint32_t leftSensePin, uint32_t rightSensePin, uint8_t active);
 
     void setAngle(int angle);
