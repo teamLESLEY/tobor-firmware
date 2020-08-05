@@ -326,3 +326,8 @@ void saveValues(){
 void loadValues() {
 
 }
+
+void finalTurn() {
+  navi.driveUntilNemo(-PIVOT_SPEED, PIVOT_SPEED, 0);
+  navi.drive(PIVOT_CORRECTION_SPEED, -PIVOT_CORRECTION_SPEED, PIVOT_CORRECTION_DURATION);
+}

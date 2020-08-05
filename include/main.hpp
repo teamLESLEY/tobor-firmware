@@ -58,6 +58,7 @@ void innerSquare();
 void reverseInLane();
 void straightUntilNemoOnRight();
 void straightUntilNemo(int startSide);
+void finalTurn();
 
 void setup();
 void loop();
@@ -93,6 +94,7 @@ Menu subMenu(
     {"Pivot until Nemo", pivotUntilNemo},
     {"Sweep perimeter", perimeter},
     {"Sweep inner square", innerSquare},
+    {"Final turn", finalTurn},
     {"Set windmill with pot", setWindmillWithPot},
     {"Set bin with pot", setBinWithPot},
     {"Bin raise on detect", raiseBinOnDetect},
