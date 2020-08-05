@@ -281,9 +281,7 @@ void subroutineMenu() {
 void raiseBinOnDetect(){
   while( ! (bin.onLeft() && bin.onRight()) ) {
     sprintf(buffer,
-      "Left: %d\nRight: %d",
-      digitalRead(BIN_DETECT_L),
-      digitalRead(BIN_DETECT_R));
+      "Left: %d\nRight: %d", bin.onLeft(), bin.onRight());
     printToDisplay(buffer);
 
     motorL.setSpeed(- MOTOR_BASE_SPEED * (!bin.onLeft()));
