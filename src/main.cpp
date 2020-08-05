@@ -251,7 +251,12 @@ void straightUntilNemo(int startSide){
 
   while(!digitalRead(CONFIRM)){
     kprop = analogRead(DEBUG_POT) * gain / 5000.0;
-    sprintf(buffer, "Setting kp: %d\n\nUP to run\nDOWN to exit", (int) analogRead(DEBUG_POT));
+    sprintf(buffer,
+        "Setting kp: %d\n\nTape L: %d\nTape R: %d\n\nUP to run\nDOWN to exit",
+        (int) analogRead(DEBUG_POT),
+        tape.getLeftReading(),
+        tape.getRightReading()
+        );
     printToDisplay(buffer);
     if(digitalRead(CYCLE)){
       return;
