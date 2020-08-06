@@ -14,9 +14,7 @@ namespace Motor {
         int nemo;
 
         int previousError = 0;
-        int lastIterationError = 0;
         unsigned long previousErrorStartTime = 0;
-        unsigned long currentErrorStartTime = 0;
 
     public:
         inline static bool nemoTriggered = false;

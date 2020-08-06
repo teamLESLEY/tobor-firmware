@@ -40,6 +40,7 @@
 #define MIN_PWM_RIGHT 500
 #define K_PROPORTIONAL 300
 #define K_DERIVATIVE 0
+#define DERIVATIVE_MAX_DT 200 // the maximum value of dt for computing dError/dt
 
 #define TURN_DOMINANT 0.9
 #define TURN_SECONDARY (-0.1);
@@ -50,6 +51,7 @@
 #define PIVOT_SPEED (MOTOR_BASE_SPEED / 3)
 #define PIVOT_CORRECTION_SPEED MOTOR_BASE_SPEED
 #define PIVOT_CORRECTION_DURATION 300
+#define RIGHT_TURN_CORRECTION_DURATION 0
 
 #define SCREEN_WIDTH 128
 #define SCREEN_HEIGHT 64

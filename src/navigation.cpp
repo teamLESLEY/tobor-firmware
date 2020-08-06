@@ -12,9 +12,7 @@ using namespace Motor;
     }
     
     void Navigator::resetPDOnSide(int side){
-        int now = millis();
-        currentErrorStartTime = now;
-        previousErrorStartTime = now;
+        previousErrorStartTime = millis();
         // Sets side of tape that navigator assumes robot is on (defaults to RIGHT if invalid input is used)
         // See tapeSensorError()
         previousError = (side == TapeSide::LEFT ? -1 : 1);
@@ -23,19 +21,30 @@ using namespace Motor;
     // follows tape, if put in a while loop
     void Navigator::correctToTape(double motorL_base_speed, double motorR_base_speed, double kp, double kd){
         unsigned long now = millis();
-
         int error = tapeSensorError();
-        if (error != lastIterationError) {
-            previousError = lastIterationError;
-            previousErrorStartTime = currentErrorStartTime;
-            currentErrorStartTime = now;
-        }
-        lastIterationError = error;
+
+        double derivative = 0; // This is zero until we detect a change
         
-        double derivative = (double)(error - previousError) / (now - previousErrorStartTime);
+        // See if a change has occured
+        if (error != previousError) {
+            // Set the derivative to reflect the change
+            double dError = error - previousError;
+            double dt = now - previousErrorStartTime;
+            derivative = dError / dt;
+
+            // Update the time tracker
+            previousErrorStartTime = now;
+            previousError = error;
+        }
+        
         double correction = kp * error + kd * derivative;
 
-        start(motorL_base_speed - correction, motorR_base_speed + correction);
+        // if (random(1, 100) > 90) {
+        //     Serial.printf("err=%d, kp=%d, corr=%d\n", error, (int)kp, (int)correction);
+        // }
+
+        start(constrain(motorL_base_speed - correction, -0.1, 1),
+            constrain(motorR_base_speed + correction, -0.1, 1));
     }
 
     bool Navigator::consumeNemoTrigger(){
