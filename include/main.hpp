@@ -17,6 +17,8 @@
 #define MENU_WAIT_TIME 500
 #define CYCLE_WAIT_TIME 200
 
+#define EMERGENCY_DUMP_TIME 55000
+
 TwoWire Wire2(DISPLAY_SDA, DISPLAY_SCL);
 Adafruit_SSD1306 display(SCREEN_WIDTH, SCREEN_HEIGHT, &Wire2, OLED_RESET);
 char buffer [147];
@@ -30,33 +32,34 @@ Bin bin(BIN_SERVO, BIN_DETECT_L, BIN_DETECT_R, BIN_DETECT_NORMAL);
 double kp;
 double kd;
 
-using std::vector;
-using std::string;
+uint32_t startTime;
+bool runningTimer = false;
 
-void debugCompetition();
-void runCompetition();
+void competition();
+void perimeterRun();
 void runEntertainment();
 
 void setWindmillWithPot();
 
-void lowerBin();
 void raiseBin();
+void lowerBin();
 void tiltBin();
 void setBinWithPot();
 void raiseBinOnDetect();
 
 void rightTurn(int skipped = 0);
 void straight();
-void leftUntilNemo();
-void rightUntilNemo();
-void pivotUntilNemo();
+void backspin();
+
 void perimeter();
 void innerSquare();
 void returnPath();
+void finale();
 void straightUntilNemoOnRight();
 void straightUntilNemo(int startSide);
 void finalTurn();
 
+void beginTimer();
 void setup();
 void loop();
 void subroutineMenu();
@@ -72,8 +75,8 @@ void hBridgeTest();
 Menu mainMenu(
   "Main Menu",
   {
-    {"Run Competition", runCompetition},
-    {"Debug Competition", debugCompetition},
+    {"Run Competition", competition},
+    {"Run Perimeter Only", perimeterRun},
     {"Entertainment", runEntertainment},
     {"Run Subroutines", subroutineMenu},
   }
@@ -84,12 +87,10 @@ Menu subMenu(
   "Subroutines",
   {
     {"Straight until Nemo", straightUntilNemoOnRight},
-    {"Right until Nemo", rightUntilNemo},
-    {"Left until Nemo", leftUntilNemo},
-    {"Pivot until Nemo", pivotUntilNemo},
     {"Sweep perimeter", perimeter},
     {"Sweep inner square", innerSquare},
     {"Return path", returnPath},
+    {"Finale", finale},
     {"Final turn", finalTurn},
     {"Set windmill with pot", setWindmillWithPot},
     {"Set bin with pot", setBinWithPot},
