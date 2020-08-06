@@ -1,11 +1,10 @@
 #include "bin.hpp"
 
-Bin::Bin(uint32_t servoPin, uint32_t leftSensePin, uint32_t rightSensePin, uint8_t active)
-	: servoPin(servoPin), leftSensePin(leftSensePin), rightSensePin(rightSensePin), active(active) {
-		int inputType = (active == HIGH) ? INPUT_PULLDOWN : INPUT_PULLUP;
-
-		pinMode(leftSensePin, inputType);
-		pinMode(rightSensePin, inputType);
+Bin::Bin(uint32_t servoPin, uint32_t leftSensePin, uint32_t rightSensePin, uint8_t normal)
+	: servoPin(servoPin), leftSensePin(leftSensePin), rightSensePin(rightSensePin),
+	  pressed(normal == NO ? LOW : HIGH) {
+		pinMode(leftSensePin, INPUT_PULLUP);
+		pinMode(rightSensePin, INPUT_PULLUP);
 }
 
 void Bin::setAngle(int angle) {
@@ -20,9 +19,9 @@ void Bin::setAngle(int angle) {
 bool Bin::onLeft() {
 	// Something fishy is going on here - digitalRead 
 	//	might want to use a pin number, not a pin name?
-	return digitalRead(leftSensePin) == active;
+	return digitalRead(leftSensePin) == pressed;
 }
 
 bool Bin::onRight() {
-	return digitalRead(rightSensePin) == active;
+	return digitalRead(rightSensePin) == pressed;
 }
