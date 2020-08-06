@@ -22,7 +22,6 @@ namespace Motor {
         Navigator(Motor::DCMotor motorL, Motor::DCMotor motorR, TapeSensor ts, int nemo);
 
         int tapeSensorError();
-        void resetPDOnSide(int side);
         void correctToTape(double motorL_base_speed, double motorR_base_speed, double kp, double kd);
         void tapeFollowUntilNemo(double lSpeed, double rSpeed, double kp, double kd,
             int startSide = TapeSide::RIGHT, int bufferTime = 0);

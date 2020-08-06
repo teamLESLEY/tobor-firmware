@@ -10,13 +10,6 @@ using namespace Motor;
             attachInterrupt(nemo, nemoDetect, FALLING);
             nemoTriggered = false;
     }
-    
-    void Navigator::resetPDOnSide(int side){
-        previousErrorStartTime = millis();
-        // Sets side of tape that navigator assumes robot is on (defaults to RIGHT if invalid input is used)
-        // See tapeSensorError()
-        previousError = (side == TapeSide::LEFT ? -1 : 1);
-    }
 
     // follows tape, if put in a while loop
     void Navigator::correctToTape(double motorL_base_speed, double motorR_base_speed, double kp, double kd){
@@ -43,8 +36,7 @@ using namespace Motor;
         //     Serial.printf("err=%d, kp=%d, corr=%d\n", error, (int)kp, (int)correction);
         // }
 
-        start(constrain(motorL_base_speed - correction, -0.1, 1),
-            constrain(motorR_base_speed + correction, -0.1, 1));
+        start(motorL_base_speed - correction, motorR_base_speed + correction);
     }
 
     bool Navigator::consumeNemoTrigger(){
@@ -55,8 +47,8 @@ using namespace Motor;
         return true;
     }
 
-    void Navigator::tapeFollowUntilNemo(double lSpeed, double rSpeed, double kp, double kd, 
-        bool reset, int startSide, int bufferTime){
+    void Navigator::tapeFollowUntilNemo(double lSpeed, double rSpeed, double kp, double kd,
+        int startSide, int bufferTime){
         consumeNemoTrigger();
         while(!consumeNemoTrigger()){
             correctToTape(lSpeed,rSpeed,kp,kd);
