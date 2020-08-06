@@ -1,9 +1,6 @@
 #include "main.hpp"
 #include "windmill.hpp"
 
-int debugToneNum = 0;
-bool debugging = false;
-
 Windmill wm{
   WINDMILL_SPEED,
   WINDMILL_PULSE_PERIOD,
@@ -13,51 +10,36 @@ Windmill wm{
   HardwareTimer(TIM1)
 };
 
-void backspin(){
-  navi.drive(-0.8, -0.8, HARD_STOP_TIME);
+void setup(){
+  kp = K_PROPORTIONAL / 10000.0;
+  kd = K_DERIVATIVE / 100.0;
+
+  display.begin(SSD1306_SWITCHCAPVCC, 0x3C);
+  display.clearDisplay();
+  display.setTextSize(1);
+  display.setTextColor(SSD1306_WHITE);
+  display.setCursor(0, 0);
+
+  // Inputs
+  pinMode(DEBUG_UP, INPUT_PULLUP);
+  pinMode(DEBUG_DOWN, INPUT_PULLUP);
+  pinMode(DEBUG_POT, INPUT);
 }
 
-void debugTone(){
-  if(debugToneNum % 12 != 4 && debugToneNum % 12 != 11){
-    debugToneNum++;
-  }
-  debugToneNum++;
-  int freq = 440 * pow(2, debugToneNum / 12.0);
-  tone(SOPRANO, freq);
+void loop() {
+  getMenuSelection(mainMenu);
+
+  printToDisplay("Returning to \nMain Menu");
+  delay(MENU_WAIT_TIME);
 }
 
-void finisher(){
-  tiltBin();
-  wm.stop();
+void competition() {
+  delay(2000);
 
-  // pivot (absorb 3 tape passes, waiting 100 ms afer each pass)
-  for(int i = 0; i < 3; i++){
-    navi.driveUntilDory(MOTOR_BASE_SPEED, -MOTOR_BASE_SPEED, 200);
-  }
-  // reverse to bin
-  navi.driveUntilDory(-MOTOR_BASE_SPEED, -MOTOR_BASE_SPEED, 100);
-  delay(300);
-  raiseBin();
-  delay(5000);
-  // binServo.detach();
+  perimeter();
+  innerSquare();
+  returnPath();
 }
-
-void raiseBin() {
-  bin.setAngle(BIN_MAX);
-}
-
-void rightTurn(int skipped){
-  backspin();
-  for(int i = 0; i < skipped + 1; i++){
-    navi.driveUntilNemo(R_TURN_L_MOTOR_SPEED, R_TURN_R_MOTOR_SPEED);
-  }
-  navi.driveUntilDory(MOTOR_BASE_SPEED, MOTOR_BASE_SPEED/2); // recovery
-}
-
-void straight(){
-  navi.tapeFollowUntilNemo(MOTOR_BASE_SPEED, MOTOR_BASE_SPEED, kp, kd);
-}
-
 
 void perimeter(){
 
@@ -118,33 +100,24 @@ void returnPath(){
   straight(); // exiting outer square
 }
 
-void waitForConfirm(){
-  if (debugging){
-    printToDisplay("Waiting for confirm\n (UP)");
-    while (!digitalRead(CONFIRM))
-    ;
+void finalTurn() {
+  navi.driveUntilNemo(0.8, -1, 750);
+}
+
+void rightTurn(int skipped){
+  backspin();
+  for(int i = 0; i < skipped + 1; i++){
+    navi.driveUntilNemo(R_TURN_L_MOTOR_SPEED, R_TURN_R_MOTOR_SPEED);
   }
+  navi.driveUntilDory(MOTOR_BASE_SPEED, MOTOR_BASE_SPEED/2); // recovery
 }
 
-void competition(){
-  delay(200);
-
-  perimeter();
-  innerSquare();
-  returnPath();
-  
+void straight(){
+  navi.tapeFollowUntilNemo(MOTOR_BASE_SPEED, MOTOR_BASE_SPEED, kp, kd);
 }
 
-void debugCompetition(){
-  printToDisplay("Debugging Competition\n:)");
-  debugging = true;
-  competition();
-}
-
-void runCompetition(){
-  printToDisplay("Running Competition\n:)");
-  debugging = false;
-  competition();
+void backspin(){
+  navi.drive(-0.8, -0.8, HARD_STOP_TIME);
 }
 
 void runEntertainment(){
@@ -152,53 +125,36 @@ void runEntertainment(){
   delay(3000);
 }
 
-void setup(){
-  // loadValues();
-
-  kp = K_PROPORTIONAL / 10000.0;
-  kd = K_DERIVATIVE / 100.0;
-
-  display.begin(SSD1306_SWITCHCAPVCC, 0x3C);
-  display.clearDisplay();
-  display.setTextSize(1);
-  display.setTextColor(SSD1306_WHITE);
-  display.setCursor(0, 0);
-
-  // Inputs
-  pinMode(DEBUG_UP, INPUT_PULLUP);
-  pinMode(DEBUG_DOWN, INPUT_PULLUP);
-  pinMode(DEBUG_POT, INPUT);
-
-  // if servo is connected to same power supply as BP, do not run this block
+void raiseBin() {
+  bin.setAngle(BIN_MAX);
 }
-
-void loop() {
-  getMenuSelection(mainMenu);
-
-  printToDisplay("Returning to \nMain Menu");
-  delay(MENU_WAIT_TIME);
-}
-
 
 void lowerBin(){
   bin.setAngle(BIN_MIN);
 }
 
-void tiltBin(){
-  bin.setAngle((BIN_MAX + 2 * BIN_MIN) / 3);
+
+void raiseBinOnDetect(){
+  while( ! (bin.onLeft() && bin.onRight()) ) {
+    sprintf(buffer,
+      "Left: %d\nRight: %d", bin.onLeft(), bin.onRight());
+    printToDisplay(buffer);
+
+    motorL.setSpeed(- MOTOR_BASE_SPEED * (!bin.onLeft()));
+    motorR.setSpeed(- MOTOR_BASE_SPEED * (!bin.onRight()));
+  }
+  navi.stop();
+  delay(200);
+  raiseBin();
 }
 
-void leftUntilNemo(){
-  navi.driveUntilNemo(L_TURN_L_MOTOR_SPEED, L_TURN_R_MOTOR_SPEED);
-}
-
-
-void rightUntilNemo(){
-  navi.driveUntilNemo(R_TURN_L_MOTOR_SPEED, R_TURN_R_MOTOR_SPEED);
-}
-
-void pivotUntilNemo(){
-  navi.driveUntilNemo(MOTOR_BASE_SPEED, - MOTOR_BASE_SPEED);
+void setBinWithPot(){
+  while(!digitalRead(CONFIRM)){
+    int angle = (int)analogRead(DEBUG_POT) * 180 / 1023;
+    sprintf(buffer, "Bin angle: %d", angle);
+    printToDisplay(buffer);
+    bin.setAngle(angle);
+  }
 }
 
 void printSensorReadings(){
@@ -211,7 +167,6 @@ void printSensorReadings(){
     printToDisplay(buffer);
   }
 }
-
 
 void setWindmillWithPot(){
   wm.start();
@@ -228,15 +183,6 @@ void setWindmillWithPot(){
   }
   if (digitalRead(CYCLE)) {
     wm.stop();
-  }
-}
-
-void setBinWithPot(){
-  while(!digitalRead(CONFIRM)){
-    int angle = (int)analogRead(DEBUG_POT) * 180 / 1023;
-    sprintf(buffer, "Bin angle: %d", angle);
-    printToDisplay(buffer);
-    bin.setAngle(angle);
   }
 }
 
@@ -269,6 +215,11 @@ void straightUntilNemoOnRight(){
   delay(1000);
 }
 
+void hBridgeTest(){
+  navi.drive(0.8,0.8,2000);
+  navi.drive(-0.8,-0.8,2000);
+}
+
 void getMenuSelection(Menu menu) {
   menu.show(display);
   while (!digitalRead(CONFIRM)) {
@@ -289,35 +240,9 @@ void subroutineMenu() {
   getMenuSelection(subMenu);
 }
 
-void raiseBinOnDetect(){
-  while( ! (bin.onLeft() && bin.onRight()) ) {
-    sprintf(buffer,
-      "Left: %d\nRight: %d", bin.onLeft(), bin.onRight());
-    printToDisplay(buffer);
-
-    motorL.setSpeed(- MOTOR_BASE_SPEED * (!bin.onLeft()));
-    motorR.setSpeed(- MOTOR_BASE_SPEED * (!bin.onRight()));
-  }
-  navi.stop();
-  delay(200);
-  raiseBin();
-}
-
-
-void hBridgeTest(){
-  navi.drive(0.8,0.8,2000);
-  navi.drive(-0.8,-0.8,2000);
-}
-
-
 void printToDisplay(const char *str) {
     display.clearDisplay();
     display.setCursor(0,0);
     display.print(str);
     display.display();
-}
-
-void finalTurn() {
-  navi.driveUntilNemo(-PIVOT_SPEED, PIVOT_SPEED, 0);
-  navi.drive(PIVOT_CORRECTION_SPEED, -PIVOT_CORRECTION_SPEED, PIVOT_CORRECTION_DURATION);
 }

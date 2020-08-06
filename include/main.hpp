@@ -30,26 +30,21 @@ Bin bin(BIN_SERVO, BIN_DETECT_L, BIN_DETECT_R, BIN_DETECT_NORMAL);
 double kp;
 double kd;
 
-using std::vector;
-using std::string;
-
-void debugCompetition();
-void runCompetition();
+void competition();
 void runEntertainment();
 
 void setWindmillWithPot();
 
-void lowerBin();
 void raiseBin();
+void lowerBin();
 void tiltBin();
 void setBinWithPot();
 void raiseBinOnDetect();
 
 void rightTurn(int skipped = 0);
 void straight();
-void leftUntilNemo();
-void rightUntilNemo();
-void pivotUntilNemo();
+void backspin();
+
 void perimeter();
 void innerSquare();
 void returnPath();
@@ -72,8 +67,7 @@ void hBridgeTest();
 Menu mainMenu(
   "Main Menu",
   {
-    {"Run Competition", runCompetition},
-    {"Debug Competition", debugCompetition},
+    {"Run Competition", competition},
     {"Entertainment", runEntertainment},
     {"Run Subroutines", subroutineMenu},
   }
@@ -84,9 +78,6 @@ Menu subMenu(
   "Subroutines",
   {
     {"Straight until Nemo", straightUntilNemoOnRight},
-    {"Right until Nemo", rightUntilNemo},
-    {"Left until Nemo", leftUntilNemo},
-    {"Pivot until Nemo", pivotUntilNemo},
     {"Sweep perimeter", perimeter},
     {"Sweep inner square", innerSquare},
     {"Return path", returnPath},
