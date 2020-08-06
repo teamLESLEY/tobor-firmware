@@ -56,9 +56,7 @@ using namespace Motor;
     }
 
     void Navigator::tapeFollowUntilNemo(double lSpeed, double rSpeed, double kp, double kd, 
-        int startSide, int bufferTime){
-
-        resetPDOnSide(startSide);
+        bool reset, int startSide, int bufferTime){
         consumeNemoTrigger();
         while(!consumeNemoTrigger()){
             correctToTape(lSpeed,rSpeed,kp,kd);
