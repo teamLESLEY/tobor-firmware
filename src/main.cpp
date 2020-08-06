@@ -26,24 +26,12 @@ void debugTone(){
   tone(SOPRANO, freq);
 }
 
-void finisher(){
-  tiltBin();
-  wm.stop();
-
-  // pivot (absorb 3 tape passes, waiting 100 ms afer each pass)
-  for(int i = 0; i < 3; i++){
-    navi.driveUntilDory(MOTOR_BASE_SPEED, -MOTOR_BASE_SPEED, 200);
-  }
-  // reverse to bin
-  navi.driveUntilDory(-MOTOR_BASE_SPEED, -MOTOR_BASE_SPEED, 100);
-  delay(300);
-  raiseBin();
-  delay(5000);
-  // binServo.detach();
-}
-
 void raiseBin() {
-  bin.setAngle(BIN_MAX);
+  Servo binServo;
+  binServo.attach(BIN_SERVO);
+  binServo.write(BIN_MAX);
+
+  // bin.setAngle(BIN_MAX);
 }
 
 void rightTurn(int skipped){
@@ -57,7 +45,6 @@ void rightTurn(int skipped){
 void straight(){
   navi.tapeFollowUntilNemo(MOTOR_BASE_SPEED, MOTOR_BASE_SPEED, kp, kd);
 }
-
 
 void perimeter(){
 
@@ -129,10 +116,14 @@ void waitForConfirm(){
 void competition(){
   delay(200);
 
+  // bin.setAngle(BIN_MIN);
+  delay(1000);
+  wm.start();
+
   perimeter();
-  innerSquare();
-  returnPath();
-  
+  straight();
+  finalTurn();
+  raiseBinOnDetect();
 }
 
 void debugCompetition(){
