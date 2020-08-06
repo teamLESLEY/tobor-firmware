@@ -25,7 +25,7 @@ TapeSensor tape(TAPE_L, TAPE_R, THRESHOLD);
 Motor::DCMotor motorL(MOTOR_L_FORWARD, MOTOR_L_REVERSE, MIN_PWM_LEFT);
 Motor::DCMotor motorR(MOTOR_R_FORWARD, MOTOR_R_REVERSE, MIN_PWM_RIGHT);
 Motor::Navigator navi(motorL, motorR, tape, NEMO);
-Bin bin(BIN_SERVO, BIN_DETECT_L, BIN_DETECT_R, BIN_DETECT_ACTIVE);
+Bin bin(BIN_SERVO, BIN_DETECT_L, BIN_DETECT_R, BIN_DETECT_NORMAL);
 
 double kp;
 double kd;

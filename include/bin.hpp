@@ -4,12 +4,15 @@
 #include <Servo.h>
 #include <Wire.h>
 
+#define NO 0
+#define NC 1
+
 class Bin {
   Servo binServo;
   uint32_t servoPin;
   uint32_t leftSensePin;
   uint32_t rightSensePin;
-  const uint8_t active;
+  const uint8_t pressed;
   bool attached = false;
 
   void setup(PinName servoPin);
