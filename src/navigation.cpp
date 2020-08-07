@@ -43,8 +43,8 @@ using namespace Motor;
         //     Serial.printf("err=%d, kp=%d, corr=%d\n", error, (int)kp, (int)correction);
         // }
 
-        start(constrain(motorL_base_speed - correction, -0.1, 1),
-            constrain(motorR_base_speed + correction, -0.1, 1));
+        start(constrain(motorL_base_speed - correction, -1, 1),
+            constrain(motorR_base_speed + correction, -1, 1));
     }
 
     bool Navigator::consumeNemoTrigger(){
